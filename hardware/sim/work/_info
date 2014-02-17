@@ -1,0 +1,52 @@
+m255
+K4
+z2
+13
+cModel Technology
+Z0 dD:/1OSU/berkeley_cs150/spring2013/mylab/Lab5/Lab5UART/sim
+!s112 0.1
+!i10d 8192
+!i10e 25
+!i10f 100
+vRegFile
+Z1 !s100 GD_C:RY3Z?bIeX_m`ndBi2
+Z2 IFN07Yk@iEcd`TknZIO]e]2
+Z3 V`JN@9S9cnhjKRR_L]QIcM3
+Z4 dD:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/sim
+Z5 w1392587701
+Z6 8D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v
+Z7 FD:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v
+L0 17
+Z8 OP;L;10.2c;57
+r1
+31
+Z9 !s90 -reportprogress|300|-work|work|D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v|
+Z10 o-work work -L mtiAvm -L mtiOvm -L mtiUvm -L mtiUPF -O0
+Z11 n@reg@file
+Z12 !s110 1392588886
+Z13 !s108 1392588886.285000
+Z14 !s107 D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v|
+!i10b 1
+!s85 0
+!s101 -O0
+vRegFileTestbench
+!s110 1392589980
+!i10b 1
+!s100 C1FG@X_zD?[O>GI:ezGn:0
+IWMegob^oYXFnfeP@:4dQR1
+R3
+R4
+w1392589974
+Z15 8D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFileTestbench.v
+Z16 FD:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFileTestbench.v
+L0 5
+R8
+r1
+!s85 0
+31
+!s108 1392589980.807000
+!s107 D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFileTestbench.v|
+Z17 !s90 -reportprogress|300|-work|work|D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFileTestbench.v|
+!s101 -O0
+R10
+Z18 n@reg@file@testbench

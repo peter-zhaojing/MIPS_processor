@@ -11,15 +11,38 @@
 //  Output Interface:
 //    rd1: data stored at address ra1
 //    rd2: data stored at address ra2
-//  Author: <<YOUR NAME HERE>>
+//  Author: Jing Peter Zhao
 //-----------------------------------------------------------------------------
 
 module RegFile(input clk,
                input we,
                input  [4:0] ra1, ra2, wa,
                input  [31:0] wd,
-               output [31:0] rd1, rd2);
+               output reg [31:0] rd1, rd2);
 
 // Implement your register file here, then delete this comment.
+reg [31:0]	ram [31:0];			//Peter: reg [31:0] should be width; ram [31:0] stand for how many registers inside the ram. For MIPS, needs 32 registers
+
+
+//for synchronous write
+always @(posedge clk)	begin
+	if(we && wa != 5'd0)	ram[wa] <= wd;		//Peter: don't write Reg 0
+end
+
+//for asynchronous read
+always @(*)	begin
+	case(ra1)
+		5'b00000:	rd1 <= 32'h0000_0000;	//Reg 0 is hardcoded to be 0
+		default:		rd1 <= ram[ra1];
+	endcase
+end
+
+always @(*)	begin
+	case(ra2)
+		5'b00000:	rd2 <= 32'h0000_0000;	//Reg 0 is hardcoded to be 0
+		default:		rd2 <= ram[ra2];
+	endcase
+end
+
 
 endmodule

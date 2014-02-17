@@ -8,39 +8,7 @@
 <!-- Copyright (c) 1995-2012 Xilinx, Inc.  All rights reserved.    -->
 
 <messages>
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/EchoTestbench.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/IORegister.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/MIPS150.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v&quot; into library work</arg>
-</msg>
-
 <msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFileTestbench.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UART.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UAReceive.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1065" >&quot;<arg fmt="%s" index="1">D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UAReceive.v</arg>&quot; Line <arg fmt="%d" index="2">13</arg>. <arg fmt="%s" index="3">Include file found: &apos;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/util.vh&apos; in file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UAReceive.v&quot; line 13
-</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UATransmit.v&quot; into library work</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1065" >&quot;<arg fmt="%s" index="1">D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UATransmit.v</arg>&quot; Line <arg fmt="%d" index="2">12</arg>. <arg fmt="%s" index="3">Include file found: &apos;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/util.vh&apos; in file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/UATransmit.v&quot; line 12
-</arg>
-</msg>
-
-<msg type="info" file="ProjectMgmt" num="1845" ><arg fmt="%s" index="1">Analyzing Verilog file &quot;D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/ml505top.v&quot; into library work</arg>
 </msg>
 
 </messages>

@@ -1,0 +1,4 @@
+MO DMEM_blk_ram NULL ipcore_dir/DMEM_blk_ram_synth.v vlg12/_d_m_e_m__blk__ram.bin 1392587996
+MO RegFileTestbench NULL hardware/src/RegFileTestbench.v vlg06/_reg_file_testbench.bin 1392587996
+MO IMEM_blk_ram NULL ipcore_dir/IMEM_blk_ram_synth.v vlg63/_i_m_e_m__blk__ram.bin 1392587996
+MO RegFile NULL hardware/src/RegFile.v vlg32/_reg_file.bin 1392587996

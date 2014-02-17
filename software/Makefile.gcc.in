@@ -9,18 +9,18 @@ LDSRC := $(TARGET).ld
 default: $(TARGET)
 
 $(TARGET): $(COBJS) $(SOBJS)
-	mips-gcc -nostartfiles -nostdlib -nodefaultlibs -T $(LDSRC) $^ -o $@.elf
-	mips-strip -R .pdr -R .comment -R .reginfo $@.elf
-	mips-objcopy -O binary $(TARGET).elf $(TARGET).bin
-	bin2mif < $(TARGET).bin > $(TARGET).mif
-	bin2coe < $(TARGET).bin > $(TARGET).coe
-	bin2rom $(TARGET) 0 < $(TARGET).bin > $(TARGET).v
+	mips-sde-elf-gcc -nostartfiles -nostdlib -nodefaultlibs -T $(LDSRC) $^ -o $@.elf
+	mips-sde-elf-strip -R .pdr -R .comment -R .reginfo $@.elf
+	mips-sde-elf-objcopy -O binary $(TARGET).elf $(TARGET).bin
+	bin2mif $(TARGET).bin $(TARGET).mif
+	bin2coe $(TARGET).bin $(TARGET).coe 32
+#	bin2rom $(TARGET) 0 < $(TARGET).bin > $(TARGET).v
 
 %.c.o: %.c
-	mips-gcc -c $< -o $@
+	mips-sde-elf-gcc -c $< -o $@
 
 %.s.o: %.s
-	mips-as $< -o $@
+	mips-sde-elf-as $< -o $@
 
 clean:
 	rm -f $(COBJS) $(SOBJS) $(TARGET).elf $(TARGET).{bin,mif,v,coe}

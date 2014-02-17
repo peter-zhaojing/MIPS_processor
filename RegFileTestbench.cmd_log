@@ -1,0 +1,1 @@
+xst -intstyle ise -ifn "D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/RegFileTestbench.xst" -ofn "D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/RegFileTestbench.syr" 

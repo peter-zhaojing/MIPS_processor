@@ -23,7 +23,7 @@ module UATransmit(
   localparam  ClockCounterWidth =   log2(SymbolEdgeTime);
 
 
-  //2/3/2014
+  //2/3/2014 Peter
   //declaration
   wire Start;
   wire TXRunning;

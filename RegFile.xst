@@ -1,0 +1,5 @@
+set -tmpdir "D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/xst/projnav.tmp"
+set -xsthdpdir "D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/xst"
+elaborate
+-ifn RegFile.prj
+-ifmt mixed

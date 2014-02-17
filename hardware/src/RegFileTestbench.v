@@ -23,7 +23,7 @@ module RegFileTestbench();
   wire [31:0] rd1;
   wire [31:0] rd2;
 
-  RegFile DUT(.clk(Clock),
+  (* ram_style = "distributed" *) RegFile regfile(.clk(Clock),			//Peter: force synthesizer tool to use "distributed" ram
               .we(we),
               .ra1(ra1),
               .ra2(ra2),
@@ -37,14 +37,29 @@ module RegFileTestbench();
   initial begin
     #1;
     // Verify that writing to reg 0 is a nop
-    
+    ra1 = 5'b0000;
+	  we = 1;
+	  wa = 5'b00000;
+	  wd = 32'h0000_0001;
+	 
+	  #Cycle;
+	  we = 0;
     // Verify that data written to any other register is returned the same
     // cycle
-    
+    //write reg1
+    #Cycle;
+    ra1 = 5'b0001;
+    we = 1;
+    wa = 5'b00001;
+    wd = 32'h1111_1111;
+	 
+	  #Cycle;
+	  we = 0;
     // Verify that the we pin prevents data from being written
-
+	  wd = 32'h1010_1010;
     // Verify the reads are asynchronous
    
+   #(Cycle*100);
     $display("All tests passed!");
     $finish();
   end
