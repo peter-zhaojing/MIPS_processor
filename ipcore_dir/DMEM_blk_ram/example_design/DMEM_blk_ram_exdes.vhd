@@ -91,7 +91,7 @@ ENTITY DMEM_blk_ram_exdes IS
     ENA            : IN STD_LOGIC;  --opt port
   
     WEA            : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-    ADDRA          : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    ADDRA          : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
   
     DINA           : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
   
@@ -119,7 +119,7 @@ ARCHITECTURE xilinx OF DMEM_blk_ram_exdes IS
     ENA        : IN STD_LOGIC;  --opt port
   
     WEA        : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-    ADDRA      : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+    ADDRA      : IN STD_LOGIC_VECTOR(11 DOWNTO 0);
   
     DINA       : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
   

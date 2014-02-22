@@ -48,15 +48,15 @@ module DMEM_blk_ram(
 input clka;
 input ena;
 input [3 : 0] wea;
-input [31 : 0] addra;
+input [11 : 0] addra;
 input [31 : 0] dina;
 output [31 : 0] douta;
 
 // synthesis translate_off
 
   BLK_MEM_GEN_V7_2 #(
-    .C_ADDRA_WIDTH(32),
-    .C_ADDRB_WIDTH(32),
+    .C_ADDRA_WIDTH(12),
+    .C_ADDRB_WIDTH(12),
     .C_ALGORITHM(1),
     .C_AXI_ID_WIDTH(4),
     .C_AXI_SLAVE_TYPE(0),
@@ -66,7 +66,7 @@ output [31 : 0] douta;
     .C_DEFAULT_DATA("0"),
     .C_DISABLE_WARN_BHV_COLL(0),
     .C_DISABLE_WARN_BHV_RANGE(0),
-    .C_ENABLE_32BIT_ADDRESS(1),
+    .C_ENABLE_32BIT_ADDRESS(0),
     .C_FAMILY("virtex5"),
     .C_HAS_AXI_ID(0),
     .C_HAS_ENA(1),
@@ -83,6 +83,7 @@ output [31 : 0] douta;
     .C_HAS_SOFTECC_INPUT_REGS_A(0),
     .C_HAS_SOFTECC_OUTPUT_REGS_B(0),
     .C_INIT_FILE_NAME("DMEM_blk_ram.mif"),
+    //.C_INIT_FILE_NAME("dummy_DMEM.mif"),
     .C_INITA_VAL("0"),
     .C_INITB_VAL("0"),
     .C_INTERFACE_TYPE(0),

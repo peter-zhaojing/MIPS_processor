@@ -1,0 +1,4 @@
+verilog work "ipcore_dir/IMEM_blk_ram_synth.v"
+verilog work "ipcore_dir/IMEM_blk_ram.v"
+verilog work "hardware/sim/BlkMemTestbench.v"
+verilog work "d:/Xilinx/14.2/ISE_DS/ISE//verilog/src/glbl.v"

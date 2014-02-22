@@ -70,7 +70,7 @@ module DMEM_blk_ram (
   input clka;
   input ena;
   input [3 : 0] wea;
-  input [31 : 0] addra;
+  input [11 : 0] addra;
   input [31 : 0] dina;
   output [31 : 0] douta;
 

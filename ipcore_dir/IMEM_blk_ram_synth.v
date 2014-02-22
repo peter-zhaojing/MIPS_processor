@@ -72,10 +72,10 @@ module IMEM_blk_ram (
   input clka;
   input ena;
   input [3 : 0] wea;
-  input [31 : 0] addra;
+  input [11 : 0] addra;
   input [31 : 0] dina;
   input clkb;
-  input [31 : 0] addrb;
+  input [11 : 0] addrb;
   output [31 : 0] doutb;
 
   // WARNING: This file provides a module declaration only, it does not support

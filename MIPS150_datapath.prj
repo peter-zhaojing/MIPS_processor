@@ -1,0 +1,7 @@
+verilog work "ipcore_dir/IMEM_blk_ram.v"
+verilog work "ipcore_dir/DMEM_blk_ram.v"
+verilog work "hardware/src/RegFile.v"
+verilog work "hardware/src/ALU.v"
+verilog work "hardware/src/MIPS150_datapath.v"
+verilog work "ipcore_dir/IMEM_blk_ram_synth.v"
+verilog work "ipcore_dir/DMEM_blk_ram_synth.v"

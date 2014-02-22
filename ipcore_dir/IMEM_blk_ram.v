@@ -50,17 +50,17 @@ module IMEM_blk_ram(
 input clka;
 input ena;
 input [3 : 0] wea;
-input [31 : 0] addra;
+input [11 : 0] addra;
 input [31 : 0] dina;
 input clkb;
-input [31 : 0] addrb;
+input [11 : 0] addrb;
 output [31 : 0] doutb;
 
 // synthesis translate_off
 
   BLK_MEM_GEN_V7_2 #(
-    .C_ADDRA_WIDTH(32),
-    .C_ADDRB_WIDTH(32),
+    .C_ADDRA_WIDTH(12),
+    .C_ADDRB_WIDTH(12),
     .C_ALGORITHM(1),
     .C_AXI_ID_WIDTH(4),
     .C_AXI_SLAVE_TYPE(0),
@@ -70,7 +70,7 @@ output [31 : 0] doutb;
     .C_DEFAULT_DATA("0"),
     .C_DISABLE_WARN_BHV_COLL(0),
     .C_DISABLE_WARN_BHV_RANGE(0),
-    .C_ENABLE_32BIT_ADDRESS(1),
+    .C_ENABLE_32BIT_ADDRESS(0),
     .C_FAMILY("virtex5"),
     .C_HAS_AXI_ID(0),
     .C_HAS_ENA(1),

@@ -65,10 +65,10 @@ IMEM_blk_ram your_instance_name (
   .clka(clka), // input clka
   .ena(ena), // input ena
   .wea(wea), // input [3 : 0] wea
-  .addra(addra), // input [31 : 0] addra
+  .addra(addra), // input [11 : 0] addra
   .dina(dina), // input [31 : 0] dina
   .clkb(clkb), // input clkb
-  .addrb(addrb), // input [31 : 0] addrb
+  .addrb(addrb), // input [11 : 0] addrb
   .doutb(doutb) // output [31 : 0] doutb
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------

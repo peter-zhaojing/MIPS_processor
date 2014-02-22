@@ -1,0 +1,64 @@
+D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/ipcore_dir/IMEM_true_blk_ram.v {1 {vlog -work work D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/ipcore_dir/IMEM_true_blk_ram.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module IMEM_true_blk_ram
+
+Top level modules:
+	IMEM_true_blk_ram
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/ipcore_dir/DMEM_blk_ram.v {1 {vlog -work work D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/ipcore_dir/DMEM_blk_ram.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module DMEM_blk_ram
+
+Top level modules:
+	DMEM_blk_ram
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/sim/BlkMemTestbench.v {1 {vlog -work work D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/sim/BlkMemTestbench.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module BlkMemTestbench
+
+Top level modules:
+	BlkMemTestbench
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/ALU.v {1 {vlog -work work +incdir+D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/ALU.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module ALU
+
+Top level modules:
+	ALU
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v {1 {vlog -work work D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/RegFile.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module RegFile
+
+Top level modules:
+	RegFile
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/ALUdec.v {1 {vlog -work work +incdir+D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/ALUdec.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module ALUdec
+
+Top level modules:
+	ALUdec
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/MIPS150.v {1 {vlog -work work D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/MIPS150.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module MIPS150
+
+Top level modules:
+	MIPS150
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/MIPS150_control.v {1 {vlog -work work +incdir+D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/src/MIPS150_control.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module MIPS150_control
+
+Top level modules:
+	MIPS150_control
+
+} {} {}} D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/sim/MIPS150Testbench.v {1 {vlog -work work D:/1OSU/berkeley_cs150/spring2013/mylab/MIPS_processor/MIPS_processor/hardware/sim/MIPS150Testbench.v
+Model Technology ModelSim PE Student Edition vlog 10.2c Compiler 2013.07 Jul 18 2013
+-- Compiling module MIPS150Testbench
+
+Top level modules:
+	MIPS150Testbench
+
+} {} {}}

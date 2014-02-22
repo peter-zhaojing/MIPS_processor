@@ -65,7 +65,7 @@ DMEM_blk_ram your_instance_name (
   .clka(clka), // input clka
   .ena(ena), // input ena
   .wea(wea), // input [3 : 0] wea
-  .addra(addra), // input [31 : 0] addra
+  .addra(addra), // input [11 : 0] addra
   .dina(dina), // input [31 : 0] dina
   .douta(douta) // output [31 : 0] douta
 );
