@@ -26,7 +26,8 @@ module MIPS150_datapath(
 	 //Control Signals
 	 input	[3:0]		ALUControl,
 	 input				RegWrite,
-	 input	[1:0]		MemAlign
+	 input	[1:0]		MemAlign,
+	 input	[2:0]		SignZeroChop
     );
 
 /**********************************************************/
@@ -47,6 +48,7 @@ wire	[31:0]	RFout1, RFout2;
 wire	[31:0]	ALUOutX;
 wire	[3:0]		ALUControlX;
 wire	[31:0]	SrcAX, SrcBX;
+wire  [1:0]		MemAlignX;
 
 //M stage
 reg				RegWriteM;
@@ -54,11 +56,11 @@ reg	[4:0]		WriteRegM;
 wire	[31:0]	ResultM;
 reg	[31:0]	ALUOutM;
 reg   [31:0]	ALUOutPadding;
-wire	[31:0]	ReadDateM;
 reg				tempRegWriteM;
 reg	[3:0]		tempWriteRegM;
 wire	[31:0]	ReadDataM;
-
+wire	[2:0]		SignZeroChopM;
+reg	[31:0]	SignZeroExDMEM;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -67,6 +69,7 @@ assign Instr			= InstrX;
 assign ALUControlX	= ALUControl;
 assign RegWriteX		= RegWrite;
 assign MemAlignX		= MemAlign;
+assign SignZeroChopM	= SignZeroChop;
 
 
 /**********************************************************/
@@ -159,10 +162,21 @@ DMEM_blk_ram MIPS150_dmem(
 );
 
 
+//Sign or Zero extention, chopping DMEM output
+always@(*)	begin
+	case(SignZeroChopM)
+		3'b000:			SignZeroExDMEM = {{24{ReadDataM[7]}},ReadDataM[7:0]};
+		3'b001:			SignZeroExDMEM = {{16{ReadDataM[7]}},ReadDataM[15:0]};
+		3'b010:			SignZeroExDMEM = ReadDataM;
+		3'b011:			SignZeroExDMEM = {24'b0,ReadDataM[7:0]};
+		3'b100:			SignZeroExDMEM = {16'b0,ReadDataM[15:0]};
+		default:			SignZeroExDMEM = 32'bx;
+	endcase
+end
 
 //Write back to Register File
 //ResultM has already connected to Register File via RegFile instantiation
-assign ResultM = ReadDataM;
+assign ResultM = SignZeroExDMEM;
 
 
 /***********************************************************/
