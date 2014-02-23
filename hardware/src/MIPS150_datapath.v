@@ -25,7 +25,8 @@ module MIPS150_datapath(
 	
 	 //Control Signals
 	 input	[3:0]		ALUControl,
-	 input				RegWrite
+	 input				RegWrite,
+	 input	[1:0]		MemAlign
     );
 
 /**********************************************************/
@@ -39,7 +40,7 @@ wire	[31:0]	PC_IN;
 
 
 //X stage
-reg	[31:0]	InstrX;
+wire	[31:0]	InstrX;
 wire				RegWriteX;
 wire	[4:0]		WriteRegX;
 wire	[31:0]	RFout1, RFout2;
@@ -52,7 +53,7 @@ reg				RegWriteM;
 reg	[4:0]		WriteRegM;
 wire	[31:0]	ResultM;
 reg	[31:0]	ALUOutM;
-wire  [31:0]	ALUOutPadding;
+reg   [31:0]	ALUOutPadding;
 wire	[31:0]	ReadDateM;
 reg				tempRegWriteM;
 reg	[3:0]		tempWriteRegM;
@@ -62,10 +63,10 @@ wire	[31:0]	ReadDataM;
 /**********************************************************/
 //Connecting signals to module port
 /**********************************************************/
-assign Instr			= InstrI;
+assign Instr			= InstrX;
 assign ALUControlX	= ALUControl;
 assign RegWriteX		= RegWrite;
-
+assign MemAlignX		= MemAlign;
 
 
 /**********************************************************/
@@ -83,13 +84,13 @@ assign PC_IN = PC_OUT + 32'd4;
 //instantiate IMEM
 IMEM_blk_ram	MIPS150_imem(
 	.clka		(clk),
-	.ena		(~rst),					//Port Clock Enable (ena)
+	.ena		(1'b1),					//Port Clock Enable (ena)
 	.wea		(4'b0000),					//Port A Write Enable. Used to change contents that stored in IMEM?
 	.addra	(12'h000),					//Write Address, 12 bits wide
 	.dina		(32'h0000_0000),					//The contents to be written, 32 bits wide
 	.clkb		(clk),
 	.addrb	(PC_OUT[13:2]),	//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
-	.doutb	(InstrI)
+	.doutb	(InstrX)
 );
 
 
@@ -126,6 +127,23 @@ assign SrcBX = {{16{InstrX[15]}},InstrX[15:0]};
 assign WriteRegX = InstrX[20:16];
 
 
+//For Byte, Half, Word, ALUOutPadding is different
+
+/*********************/
+//MemAlign 00 => Byte
+//MemAlign 01 => Half
+//MemAlign 10 => Word
+/*********************/
+always@(*) begin
+	case(MemAlignX)
+		2'b00:	ALUOutPadding = ALUOutX;
+		2'b01:	ALUOutPadding = {ALUOutX[31:1],1'b0};
+		2'b10:	ALUOutPadding = {ALUOutX[31:2],2'b0};
+		default: ALUOutPadding = 32'bx;
+	endcase
+end
+
+
 /***********************************************************/
 //M stage datapath
 /***********************************************************/
@@ -140,33 +158,30 @@ DMEM_blk_ram MIPS150_dmem(
 	.douta	(ReadDataM)
 );
 
-assign ALUOutPadding = ALUOutM;
+
 
 //Write back to Register File
 //ResultM has already connected to Register File via RegFile instantiation
 assign ResultM = ReadDataM;
 
-//Keep ResultM and RegWriteM,RegWriteM in sync
-always@(posedge clk) begin
-	RegWriteM	<= tempRegWriteM;
-	WriteRegM	<=	tempWriteRegM;
-end
 
 /***********************************************************/
 //I-X Pipeline Register
 /***********************************************************/
+
+/*
 always@(posedge clk)	begin
 	if(!rst)	InstrX	<=	InstrI;
 end
+*/
 
 /***********************************************************/
 //X-M Pipeline Register
 /***********************************************************/
 always@(posedge clk) begin
 	if(!rst)	begin
-	tempRegWriteM	<=	RegWriteX;
-	tempWriteRegM	<=	WriteRegX;
-	ALUOutM			<= ALUOutX;
+		RegWriteM	<=	RegWriteX;
+		WriteRegM	<=	WriteRegX;
 	end
 end
 

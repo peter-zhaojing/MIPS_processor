@@ -22,9 +22,10 @@
 `include "Opcode.vh"
 
 module MIPS150_control(
-    input	[31:0]	Instr,
-	 output	[3:0]		ALUControl,
-	 output	reg		RegWrite
+    input	[31:0]		Instr,
+	 output	[3:0]			ALUControl,
+	 output	reg			RegWrite,
+	 output	reg [1:0]	MemAlign
     );
 
 wire [5:0]	opcode, funct;
@@ -45,13 +46,32 @@ ALUdec MIPS150_aludec(
 always@(*) begin
 	case(opcode)
 		// Load/store
-		`LB,`LH,`LW,`LBU,`LHU:	begin
-			RegWrite = 1;
 		
-		end
-		
-	
-	
+		/*********************/
+		//MemAlign 00 => Byte
+		//MemAlign 01 => Half
+		//MemAlign 10 => Word
+		/*********************/
+		`LB:	begin
+					RegWrite = 1;
+					MemAlign = 2'b00;				
+				end
+		`LH:	begin
+					RegWrite = 1;
+					MemAlign = 2'b01;
+				end
+		`LW:	begin
+					RegWrite = 1;
+					MemAlign = 2'b10;
+				end
+		`LBU:	begin
+					RegWrite = 1;
+					MemAlign = 2'b00;
+				end
+		`LHU:	begin
+					RegWrite = 1;
+					MemAlign = 2'b01;					
+				end
 	endcase
 end
 
