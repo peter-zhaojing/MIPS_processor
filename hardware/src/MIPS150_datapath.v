@@ -49,18 +49,21 @@ wire	[31:0]	ALUOutX;
 wire	[3:0]		ALUControlX;
 wire	[31:0]	SrcAX, SrcBX;
 wire  [1:0]		MemAlignX;
+wire	[1:0]		ByteAddrX;
+wire	[2:0]		SignZeroChopX;
 
 //M stage
 reg				RegWriteM;
 reg	[4:0]		WriteRegM;
 wire	[31:0]	ResultM;
 reg	[31:0]	ALUOutM;
-reg   [31:0]	ALUOutPadding;
+wire   [31:0]	ALUOutPadding;
 reg				tempRegWriteM;
 reg	[3:0]		tempWriteRegM;
 wire	[31:0]	ReadDataM;
-wire	[2:0]		SignZeroChopM;
+reg	[2:0]		SignZeroChopM;
 reg	[31:0]	SignZeroExDMEM;
+reg	[1:0]		ByteAddrM;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -69,7 +72,7 @@ assign Instr			= InstrX;
 assign ALUControlX	= ALUControl;
 assign RegWriteX		= RegWrite;
 assign MemAlignX		= MemAlign;
-assign SignZeroChopM	= SignZeroChop;
+assign SignZeroChopX	= SignZeroChop;
 
 
 /**********************************************************/
@@ -130,13 +133,17 @@ assign SrcBX = {{16{InstrX[15]}},InstrX[15:0]};
 assign WriteRegX = InstrX[20:16];
 
 
-//For Byte, Half, Word, ALUOutPadding is different
+//For Byte, Half, Word, Address is same at this point because DMEM is word-addressable. Masks will be applied on Dout to address BYTE, HALF or WORD
+assign ALUOutPadding = {ALUOutX[31:2],2'b0};
+
+assign ByteAddrX = ALUOutX[1:0];
 
 /*********************/
 //MemAlign 00 => Byte
 //MemAlign 01 => Half
 //MemAlign 10 => Word
 /*********************/
+/*
 always@(*) begin
 	case(MemAlignX)
 		2'b00:	ALUOutPadding = ALUOutX;
@@ -145,6 +152,7 @@ always@(*) begin
 		default: ALUOutPadding = 32'bx;
 	endcase
 end
+*/
 
 
 /***********************************************************/
@@ -154,22 +162,40 @@ end
 //instantiate DMEM
 DMEM_blk_ram MIPS150_dmem(
 	.clka		(clk),
-	.ena		(1'b1),							//Port Clock Enable (ena) is kinda global enable. If desserted, no Read, Write, or Reset operation are performed on the port
+	.ena		(1'b1),						//Port Clock Enable (ena) is kinda global enable. If desserted, no Read, Write, or Reset operation are performed on the port
 	.wea		(),							//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
-	.addra	(ALUOutPadding[11:0]),	//TODO: let's put 11:0 first
+	.addra	(ALUOutPadding[13:2]),	//The two LSB are 0, don't parse as address. Actually no need padding, just use ALUOutX[13:2]
 	.dina		(),							//Not used for "Load"
 	.douta	(ReadDataM)
 );
 
 
 //Sign or Zero extention, chopping DMEM output
+//SignZeroChop order: LB, LH, LW, LBU, LHU
+//RAM is big-endian!
 always@(*)	begin
 	case(SignZeroChopM)
-		3'b000:			SignZeroExDMEM = {{24{ReadDataM[7]}},ReadDataM[7:0]};
-		3'b001:			SignZeroExDMEM = {{16{ReadDataM[7]}},ReadDataM[15:0]};
-		3'b010:			SignZeroExDMEM = ReadDataM;
-		3'b011:			SignZeroExDMEM = {24'b0,ReadDataM[7:0]};
-		3'b100:			SignZeroExDMEM = {16'b0,ReadDataM[15:0]};
+		3'b000:			begin		//LB
+			if		  (ByteAddrM == 2'b00)	SignZeroExDMEM = {{24{ReadDataM[31]}},ReadDataM[31:24]};	//Byte0
+			else if (ByteAddrM == 2'b01)	SignZeroExDMEM = {{24{ReadDataM[23]}},ReadDataM[23:16]};	//Byte1
+			else if (ByteAddrM == 2'b10)	SignZeroExDMEM = {{24{ReadDataM[15]}},ReadDataM[15:8]};	//Byte2
+			else if (ByteAddrM == 2'b11)	SignZeroExDMEM = {{24{ReadDataM[7]}},ReadDataM[7:0]};	//Byte3
+		end
+		3'b001:			begin		//LH
+			if			(ByteAddrM[1] == 1'b0)	SignZeroExDMEM = {{16{ReadDataM[31]}},ReadDataM[31:16]};	//Half 0
+			else if	(ByteAddrM[1] == 1'b1)	SignZeroExDMEM = {{16{ReadDataM[15]}},ReadDataM[15:0]};	//Half 1
+		end
+		3'b010:		SignZeroExDMEM = ReadDataM;	//LW
+		3'b011:			begin		//LBU
+			if		  (ByteAddrM == 2'b00)	SignZeroExDMEM = {24'b0,ReadDataM[31:24]};	//Byte0
+			else if (ByteAddrM == 2'b01)	SignZeroExDMEM = {24'b0,ReadDataM[23:16]};	//Byte1
+			else if (ByteAddrM == 2'b10)	SignZeroExDMEM = {24'b0,ReadDataM[15:8]};	//Byte2
+			else if (ByteAddrM == 2'b11)	SignZeroExDMEM = {24'b0,ReadDataM[7:0]};	//Byte3
+		end
+		3'b100:			begin		//LHU
+			if			(ByteAddrM[1] == 1'b0)	SignZeroExDMEM = {16'b0,ReadDataM[31:16]};	//Half 0
+			else if	(ByteAddrM[1] == 1'b1)	SignZeroExDMEM = {16'b0,ReadDataM[15:0]};	//Half 1
+		end
 		default:			SignZeroExDMEM = 32'bx;
 	endcase
 end
@@ -196,6 +222,8 @@ always@(posedge clk) begin
 	if(!rst)	begin
 		RegWriteM	<=	RegWriteX;
 		WriteRegM	<=	WriteRegX;
+		ByteAddrM	<= ByteAddrX;
+		SignZeroChopM	<= SignZeroChopX;
 	end
 end
 
