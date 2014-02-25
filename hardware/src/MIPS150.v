@@ -13,7 +13,7 @@ wire	[31:0]	Instr;
 wire	[3:0]		ALUControl;
 wire				RegWrite;
 wire	[1:0]		MemAlign;
-wire	[2:0]		SignZeroChop;
+wire	[2:0]		Mask;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -23,7 +23,7 @@ MIPS150_datapath mips_datapath(
 	.ALUControl	(ALUControl),
 	.RegWrite	(RegWrite),
 	.MemAlign	(MemAlign),
-	.SignZeroChop	(SignZeroChop)
+	.Mask	(Mask)
 );
 
 
@@ -33,7 +33,7 @@ MIPS150_control mips_control(
 	 .ALUControl	(ALUControl),
 	 .RegWrite		(RegWrite),
 	 .MemAlign		(MemAlign),
-	 .SignZeroChop	(SignZeroChop)
+	 .Mask	(Mask)
 );
 
 endmodule

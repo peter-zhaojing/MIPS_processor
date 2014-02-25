@@ -43,6 +43,7 @@ module IMEM_blk_ram(
   addra,
   dina,
   clkb,
+  enb,
   addrb,
   doutb
 );
@@ -53,6 +54,7 @@ input [3 : 0] wea;
 input [11 : 0] addra;
 input [31 : 0] dina;
 input clkb;
+input enb;
 input [11 : 0] addrb;
 output [31 : 0] doutb;
 
@@ -74,7 +76,7 @@ output [31 : 0] doutb;
     .C_FAMILY("virtex5"),
     .C_HAS_AXI_ID(0),
     .C_HAS_ENA(1),
-    .C_HAS_ENB(0),
+    .C_HAS_ENB(1),
     .C_HAS_INJECTERR(0),
     .C_HAS_MEM_OUTPUT_REGS_A(0),
     .C_HAS_MEM_OUTPUT_REGS_B(0),
@@ -126,13 +128,13 @@ output [31 : 0] doutb;
     .ADDRA(addra),
     .DINA(dina),
     .CLKB(clkb),
+    .ENB(enb),
     .ADDRB(addrb),
     .DOUTB(doutb),
     .RSTA(),
     .REGCEA(),
     .DOUTA(),
     .RSTB(),
-    .ENB(),
     .REGCEB(),
     .WEB(),
     .DINB(),
