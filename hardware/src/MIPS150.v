@@ -14,6 +14,7 @@ wire	[3:0]		ALUControl;
 wire				RegWrite;
 wire	[1:0]		MemAlign;
 wire	[2:0]		Mask;
+wire  [1:0]		MemWrite;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -23,7 +24,8 @@ MIPS150_datapath mips_datapath(
 	.ALUControl	(ALUControl),
 	.RegWrite	(RegWrite),
 	.MemAlign	(MemAlign),
-	.Mask	(Mask)
+	.Mask			(Mask),
+	.MemWrite	(MemWrite)
 );
 
 
@@ -33,7 +35,8 @@ MIPS150_control mips_control(
 	 .ALUControl	(ALUControl),
 	 .RegWrite		(RegWrite),
 	 .MemAlign		(MemAlign),
-	 .Mask	(Mask)
+	 .Mask			(Mask),
+	 .MemWrite		(MemWrite)
 );
 
 endmodule

@@ -27,7 +27,8 @@ module MIPS150_datapath(
 	 input	[3:0]		ALUControl,
 	 input				RegWrite,
 	 input	[1:0]		MemAlign,
-	 input	[2:0]		Mask
+	 input	[2:0]		Mask,
+	 input	[1:0]		MemWrite
     );
 
 /**********************************************************/
@@ -51,6 +52,8 @@ wire	[31:0]	SrcAX, SrcBX;
 wire  [1:0]		MemAlignX;
 wire	[1:0]		ByteAddrX;
 wire	[2:0]		MaskX;
+wire	[1:0]		MemWriteX;
+reg	[3:0]		StoreMaskX;
 
 //M stage
 reg				RegWriteM;
@@ -72,8 +75,8 @@ assign Instr			= InstrX;
 assign ALUControlX	= ALUControl;
 assign RegWriteX		= RegWrite;
 assign MemAlignX		= MemAlign;
-assign MaskX	= Mask;
-
+assign MaskX			= Mask;
+assign MemWriteX		= MemWrite;
 
 /**********************************************************/
 //I stage datapath
@@ -109,7 +112,7 @@ IMEM_blk_ram	MIPS150_imem(
 	.clk		(clk),			
    .we		(RegWriteM),
    .ra1		(InstrX[25:21]),
-   .ra2		(),						//not used for "Load"
+   .ra2		(InstrX[20:16]),		//used for "Store"
    .wa		(WriteRegM),
    .wd		(ResultM),				//Write back
    .rd1		(RFout1),
@@ -154,6 +157,29 @@ always@(*) begin
 end
 */
 
+//For "Store", generate WEA bus
+always@(*)	begin
+	case(MemWriteX)
+		2'b00:	StoreMaskX = 4'b0000;		//Not "Store" Instr
+		
+		2'b01:	begin								//SB
+			if(ByteAddrX[1:0] == 2'b00)			StoreMaskX = 4'b1000;		//byte0
+			else if(ByteAddrX[1:0] == 2'b01)		StoreMaskX = 4'b0100;		//byte1
+			else if(ByteAddrX[1:0] == 2'b10)		StoreMaskX = 4'b0010;		//byte2
+			else if(ByteAddrX[1:0] == 2'b11)		StoreMaskX = 4'b0001;		//byte3
+		end
+		
+		2'b10:	begin								//SH
+			if(ByteAddrX[1] == 1'b0)				StoreMaskX = 4'b1100;
+			else if(ByteAddrX[1] == 1'b1)			StoreMaskX = 4'b0011;
+		end
+		
+		2'b11:	begin								//SW
+			StoreMaskX = 4'b1111;
+		end
+		
+	endcase
+end
 
 /***********************************************************/
 //M stage datapath
@@ -163,9 +189,9 @@ end
 DMEM_blk_ram MIPS150_dmem(
 	.clka		(clk),
 	.ena		(1'b1),						//Port Clock Enable (ena) is kinda global enable. If desserted, no Read, Write, or Reset operation are performed on the port
-	.wea		(),							//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
+	.wea		(StoreMaskX),				//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
 	.addra	(ALUOutX[13:2]),			//The two LSB are 0, don't parse as address. Actually no need padding, just use ALUOutX[13:2]
-	.dina		(),							//Not used for "Load"
+	.dina		(RFout2),					//Used for "Store"
 	.douta	(ReadDataM)
 );
 

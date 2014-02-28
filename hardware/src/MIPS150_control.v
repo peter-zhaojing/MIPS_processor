@@ -26,7 +26,8 @@ module MIPS150_control(
 	 output	[3:0]			ALUControl,
 	 output	reg			RegWrite,
 	 output	reg [1:0]	MemAlign,
-	 output	reg [2:0]	Mask
+	 output	reg [2:0]	Mask,
+	 output	reg [1:0]	MemWrite
     );
 
 wire [5:0]	opcode, funct;
@@ -57,27 +58,46 @@ always@(*) begin
 					RegWrite = 1;
 					MemAlign = 2'b00;
 					Mask = 3'b000;
+					MemWrite = 2'b00;
 				end
 		`LH:	begin
 					RegWrite = 1;
 					MemAlign = 2'b01;
 					Mask = 3'b001;
+					MemWrite = 2'b00;
 				end
 		`LW:	begin
 					RegWrite = 1;
 					MemAlign = 2'b10;
 					Mask = 3'b010;
+					MemWrite = 2'b00;
 				end
 		`LBU:	begin
 					RegWrite = 1;
 					MemAlign = 2'b00;
 					Mask = 3'b011;
+					MemWrite = 2'b00;
 				end
 		`LHU:	begin
 					RegWrite = 1;
 					MemAlign = 2'b01;
-					Mask = 3'b100;					
+					Mask = 3'b100;
+					MemWrite = 2'b00;
 				end
+		`SB:	begin
+					MemWrite = 2'b01;
+				end
+		`SH:	begin
+					MemWrite = 2'b10;
+				end
+		`SW:	begin
+					MemWrite = 2'b11;
+				end
+		 default:	begin
+					//TODO: add default values for all signals
+					MemWrite = 2'b00;
+		 end
+		 
 	endcase
 end
 
