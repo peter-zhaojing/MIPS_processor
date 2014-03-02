@@ -1,9 +1,0 @@
-MO DMEM_blk_ram NULL ipcore_dir/DMEM_blk_ram.v vlg12/_d_m_e_m__blk__ram.bin 1392688617
-MO RegFileTestbench NULL hardware/src/RegFileTestbench.v vlg06/_reg_file_testbench.bin 1392587996
-MO MIPS150 NULL hardware/src/MIPS150.v vlg2B/_m_i_p_s150.bin 1392688617
-MO ALUdec NULL hardware/src/ALUdec.v vlg22/_a_l_udec.bin 1392688617
-MO IMEM_blk_ram NULL ipcore_dir/IMEM_blk_ram.v vlg63/_i_m_e_m__blk__ram.bin 1392688617
-MO RegFile NULL hardware/src/RegFile.v vlg32/_reg_file.bin 1392688617
-MO ALU NULL hardware/src/ALU.v vlg2A/_a_l_u.bin 1392688617
-MO MIPS150_control NULL hardware/src/MIPS150_control.v vlg5F/_m_i_p_s150__control.bin 1392688617
-MO MIPS150_datapath NULL hardware/src/MIPS150_datapath.v vlg1D/_m_i_p_s150__datapath.bin 1392688617
