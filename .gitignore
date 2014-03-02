@@ -47,3 +47,17 @@ iseconfig/
 ipcore_dir/tmp
 ipcore_dir/IMEM_blk_ram
 ipcore_dir/DMEM_blk_ram
+*.o
+*.mif
+*.coe
+*.wdb
+*.xrpt
+*.ncf
+*.xco
+*.xml
+*.v_
+*.html
+*.lso
+*.syr
+*.cmd_log
+transcript
