@@ -93,10 +93,12 @@ always@(*) begin
 		`SW:	begin
 					MemWrite = 2'b11;
 				end
+				
 		 default:	begin
 					//TODO: add default values for all signals
 					MemWrite = 2'b00;
 		 end
+		 
 		 
 	endcase
 end

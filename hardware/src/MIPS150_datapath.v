@@ -54,6 +54,11 @@ wire	[1:0]		ByteAddrX;
 wire	[2:0]		MaskX;
 wire	[1:0]		MemWriteX;
 reg	[3:0]		StoreMaskX;
+wire	[3:0]		StoreMaskDMEMX;
+wire	[3:0]		StoreMaskIMEMX;
+wire	[3:0]		StoreMaskIOX;
+wire				LoadDMEMorIOX;
+
 
 //M stage
 reg				RegWriteM;
@@ -67,6 +72,8 @@ wire	[31:0]	ReadDataM;
 reg	[2:0]		MaskM;
 reg	[31:0]	MaskOutM;
 reg	[1:0]		ByteAddrM;
+reg				LoadDMEMorIOM;
+wire	[31:0]	DataFromIOM;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -93,13 +100,13 @@ assign PC_IN = PC_OUT + 32'd4;
 //instantiate IMEM
 IMEM_blk_ram	MIPS150_imem(
 	.clka		(clk),
-	.ena		(1'b1),					//Port Clock Enable (ena)
-	.wea		(4'b0000),					//Port A Write Enable. Used to change contents that stored in IMEM?
-	.addra	(12'h000),					//Write Address, 12 bits wide
-	.dina		(32'h0000_0000),					//The contents to be written, 32 bits wide
+	.ena		(~rst),						//Port Clock Enable (ena)
+	.wea		(StoreMaskIMEMX),					//Port A Write Enable. Used to change contents that stored in IMEM?
+	.addra	(ALUOutX[13:2]),					//Write Address, 12 bits wide
+	.dina		(RFout2),			//The contents to be written, 32 bits wide
 	.clkb		(clk),
 	.enb		(~rst),
-	.addrb	(PC_OUT[13:2]),	//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
+	.addrb	(PC_OUT[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
 	.doutb	(InstrI)
 );
 
@@ -181,6 +188,19 @@ always@(*)	begin
 	endcase
 end
 
+
+//instantiate Memory Map
+MemoryMap MIPS150_memmap(
+	.StoreMask			(StoreMaskX),
+	.TopAddr				(ALUOutX[31:28]),
+	.StoreMaskDMEM		(StoreMaskDMEMX),
+	.StoreMaskIMEM		(StoreMaskIMEMX),
+	.StoreMaskIO		(StoreMaskIOX),
+	.LoadDMEMorIO		(LoadDMEMorIOX)
+);
+
+
+
 /***********************************************************/
 //M stage datapath
 /***********************************************************/
@@ -189,7 +209,7 @@ end
 DMEM_blk_ram MIPS150_dmem(
 	.clka		(clk),
 	.ena		(1'b1),						//Port Clock Enable (ena) is kinda global enable. If desserted, no Read, Write, or Reset operation are performed on the port
-	.wea		(StoreMaskX),				//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
+	.wea		(StoreMaskDMEMX),				//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
 	.addra	(ALUOutX[13:2]),			//The two LSB are 0, don't parse as address. Actually no need padding, just use ALUOutX[13:2]
 	.dina		(RFout2),					//Used for "Store"
 	.douta	(ReadDataM)
@@ -223,13 +243,14 @@ always@(*)	begin
 			if			(ByteAddrM[1] == 1'b0)	MaskOutM = {16'b0,ReadDataM[31:16]};	//Half 0
 			else if	(ByteAddrM[1] == 1'b1)	MaskOutM = {16'b0,ReadDataM[15:0]};	//Half 1
 		end
-		default:			MaskOutM = 32'bx;
+		default:		MaskOutM = 32'bx;
 	endcase
 end
 
 //Write back to Register File
 //ResultM has already connected to Register File via RegFile instantiation
-assign ResultM = MaskOutM;
+//MUX used to select sigals from DMEM or IO
+assign ResultM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
 
 
 /***********************************************************/
@@ -247,7 +268,8 @@ always@(posedge clk) begin
 		RegWriteM	<=	RegWriteX;
 		WriteRegM	<=	WriteRegX;
 		ByteAddrM	<= ByteAddrX;
-		MaskM	<= MaskX;
+		MaskM			<= MaskX;
+		LoadDMEMorIOM <= LoadDMEMorIOX;
 	end
 end
 
