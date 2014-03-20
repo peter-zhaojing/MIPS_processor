@@ -26,9 +26,10 @@ module MIPS150_datapath(
 	 //Control Signals
 	 input	[3:0]		ALUControl,
 	 input				RegWrite,
-	 input	[1:0]		MemAlign,
 	 input	[2:0]		Mask,
-	 input	[1:0]		MemWrite
+	 input	[1:0]		MemWrite,
+	 input				MemtoReg,
+	 input				LUItoReg
     );
 
 /**********************************************************/
@@ -49,7 +50,6 @@ wire	[31:0]	RFout1, RFout2;
 wire	[31:0]	ALUOutX;
 wire	[3:0]		ALUControlX;
 wire	[31:0]	SrcAX, SrcBX;
-wire  [1:0]		MemAlignX;
 wire	[1:0]		ByteAddrX;
 wire	[2:0]		MaskX;
 wire	[1:0]		MemWriteX;
@@ -58,6 +58,9 @@ wire	[3:0]		StoreMaskDMEMX;
 wire	[3:0]		StoreMaskIMEMX;
 wire	[3:0]		StoreMaskIOX;
 wire				LoadDMEMorIOX;
+wire				MemtoRegX;
+wire	[15:0]	ImmX;
+wire				LUItoRegX;
 
 
 //M stage
@@ -73,7 +76,12 @@ reg	[2:0]		MaskM;
 reg	[31:0]	MaskOutM;
 reg	[1:0]		ByteAddrM;
 reg				LoadDMEMorIOM;
-wire	[31:0]	DataFromIOM;
+wire	[31:0]	DataFromIOM;				//dummy data from IO
+reg				MemtoRegM;
+reg	[15:0]	ImmM;
+wire	[31:0]	ImmExtendedM;
+wire	[31:0]	ResultDMEMorIOorALUOutM;
+reg				LUItoRegM;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -81,9 +89,10 @@ wire	[31:0]	DataFromIOM;
 assign Instr			= InstrX;
 assign ALUControlX	= ALUControl;
 assign RegWriteX		= RegWrite;
-assign MemAlignX		= MemAlign;
 assign MaskX			= Mask;
 assign MemWriteX		= MemWrite;
+assign MemtoRegX		= MemtoReg;
+assign LUItoRegX		= LUItoReg;
 
 /**********************************************************/
 //I stage datapath
@@ -199,6 +208,8 @@ MemoryMap MIPS150_memmap(
 	.LoadDMEMorIO		(LoadDMEMorIOX)
 );
 
+//LUI
+assign ImmX = InstrX[15:0];
 
 
 /***********************************************************/
@@ -247,11 +258,20 @@ always@(*)	begin
 	endcase
 end
 
+//LUI Zero lower-extention
+assign ImmExtendedM = {ImmM,16'b0};
+
+
 //Write back to Register File
 //ResultM has already connected to Register File via RegFile instantiation
-//MUX used to select sigals from DMEM or IO
-assign ResultM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
+//One MUX used to select sigals from DMEM or IO
+assign ResultDMEMorIOM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
 
+//Another MUX used to select signal from DMEM/IO or ALUOutM
+assign ResultDMEMorIOorALUOutM = MemtoRegM? ResultDMEMorIOM : ALUOutM;
+
+//Another MUX used to select signal from LUI or DMEM/IO/ALUOut
+assign ResultM = LUItoRegM? ImmExtendedM : ResultDMEMorIOorALUOutM;
 
 /***********************************************************/
 //I-X Pipeline Register
@@ -265,11 +285,15 @@ end
 /***********************************************************/
 always@(posedge clk) begin
 	if(!rst)	begin
-		RegWriteM	<=	RegWriteX;
-		WriteRegM	<=	WriteRegX;
-		ByteAddrM	<= ByteAddrX;
-		MaskM			<= MaskX;
-		LoadDMEMorIOM <= LoadDMEMorIOX;
+		RegWriteM		<=	RegWriteX;
+		WriteRegM		<=	WriteRegX;
+		ByteAddrM		<= ByteAddrX;
+		MaskM				<= MaskX;
+		LoadDMEMorIOM 	<= LoadDMEMorIOX;
+		MemtoRegM		<= MemtoRegX;
+		ALUOutM			<= ALUOutX;
+		ImmM				<=	ImmX;
+		LUItoRegM		<= LUItoRegX;
 	end
 end
 
