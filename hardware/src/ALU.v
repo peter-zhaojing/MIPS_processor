@@ -28,7 +28,7 @@ always@(*)	begin
 		`ALU_AND:		Out = A & B;
 		`ALU_OR:		Out = A | B;
 		`ALU_XOR:		Out = A ^ B;
-		`ALU_LUI:		Out = A << B;							//Peter: not sure!! Load upper immediate
+		`ALU_LUI:		Out = {B[15:0],16'b0};						//Load upper immediate
 		`ALU_SLL:		Out = A << B;							//Peter: not sure!! Shift left logical, sll $d, $t, h ($d = $t << h)
 		`ALU_SRL:		Out = A >> B;							//Peter: not sure!! Shift right logical. Zeroes are shifted in.
 																

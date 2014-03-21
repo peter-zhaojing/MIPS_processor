@@ -76,12 +76,9 @@ reg	[2:0]		MaskM;
 reg	[31:0]	MaskOutM;
 reg	[1:0]		ByteAddrM;
 reg				LoadDMEMorIOM;
+wire	[31:0]	ResultDMEMorIOM;
 wire	[31:0]	DataFromIOM;				//dummy data from IO
 reg				MemtoRegM;
-reg	[15:0]	ImmM;
-wire	[31:0]	ImmExtendedM;
-wire	[31:0]	ResultDMEMorIOorALUOutM;
-reg				LUItoRegM;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -258,9 +255,6 @@ always@(*)	begin
 	endcase
 end
 
-//LUI Zero lower-extention
-assign ImmExtendedM = {ImmM,16'b0};
-
 
 //Write back to Register File
 //ResultM has already connected to Register File via RegFile instantiation
@@ -268,10 +262,8 @@ assign ImmExtendedM = {ImmM,16'b0};
 assign ResultDMEMorIOM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
 
 //Another MUX used to select signal from DMEM/IO or ALUOutM
-assign ResultDMEMorIOorALUOutM = MemtoRegM? ResultDMEMorIOM : ALUOutM;
+assign ResultM = MemtoRegM? ResultDMEMorIOM : ALUOutM;
 
-//Another MUX used to select signal from LUI or DMEM/IO/ALUOut
-assign ResultM = LUItoRegM? ImmExtendedM : ResultDMEMorIOorALUOutM;
 
 /***********************************************************/
 //I-X Pipeline Register
@@ -292,8 +284,6 @@ always@(posedge clk) begin
 		LoadDMEMorIOM 	<= LoadDMEMorIOX;
 		MemtoRegM		<= MemtoRegX;
 		ALUOutM			<= ALUOutX;
-		ImmM				<=	ImmX;
-		LUItoRegM		<= LUItoRegX;
 	end
 end
 

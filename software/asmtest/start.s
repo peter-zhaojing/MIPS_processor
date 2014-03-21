@@ -4,10 +4,8 @@
 _start:
 
 # Test 1
-#lw $t0, 268435456($0)		#read DMEM address0
-#lw $t1, 2147483660($0)		#read IO
-lw $t0, 1($0)
-lw $t1, 1($t0)
+lw $t0, 268435456($0)		#read DMEM address0
+lw $t1, 2147483660($0)		#read IO
 lb $t2, 1($0)
 lbu $t3, 1($0)
 addiu $t4, $t0, 1

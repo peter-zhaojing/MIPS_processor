@@ -60,56 +60,48 @@ always@(*) begin
 					Mask = 3'b000;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
-					LUItoReg = 1'b0;
 				end
 		`LH:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b001;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
-					LUItoReg = 1'b0;
 				end
 		`LW:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b010;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
-					LUItoReg = 1'b0;
 				end
 		`LBU:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b011;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
-					LUItoReg = 1'b0;
 				end
 		`LHU:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b100;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
-					LUItoReg = 1'b0;
 				end
 		`SB:	begin
 					RegWrite = 1'b0;
 					Mask = 3'bxxx;
 					MemWrite = 2'b01;
 					MemtoReg = 1'bx;
-					LUItoReg = 1'bx;
 				end
 		`SH:	begin
 					RegWrite = 1'b0;
 					Mask = 3'bxxx;
 					MemWrite = 2'b10;
 					MemtoReg = 1'bx;
-					LUItoReg = 1'bx;
 				end
 		`SW:	begin
 					RegWrite = 1'b0;
 					Mask = 3'bxxx;
 					MemWrite = 2'b11;
 					MemtoReg = 1'bx;
-					LUItoReg = 1'bx;
 				end
 		 
 		 // I-type Computational Instructions
@@ -118,14 +110,12 @@ always@(*) begin
 						Mask = 3'bxxx;
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
-						LUItoReg = 1'b0;
 					end
 		 `LUI:	begin
 						RegWrite = 1'b1;
 						Mask = 3'bxxx;
 						MemWrite = 2'b00;
-						MemtoReg = 1'bx;
-						LUItoReg = 1'b1;
+						MemtoReg = 1'b0;
 					end
 		
 		 default:	begin
@@ -134,7 +124,6 @@ always@(*) begin
 					Mask = 3'bxxx;
 					MemWrite = 2'b00;
 					MemtoReg = 1'bx;		//TODO: put don't care or 0 or 1?
-					LUItoReg = 1'bx;
 		 end
 		 
 		 

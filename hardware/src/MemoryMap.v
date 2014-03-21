@@ -29,16 +29,16 @@ module MemoryMap(
 
 
 always@(*)	begin
-	case (TopAddr)
+	casez (TopAddr)
 	
-		4'b0xx1:	begin			//DMEM Read/Write
+		4'b0??1:	begin			//DMEM Read/Write
 			StoreMaskDMEM = 	StoreMask;
 			StoreMaskIMEM = 	4'b0000;
 			StoreMaskIO = 		4'b0000;
 			LoadDMEMorIO = 	1'b0;
 		end
 		
-		4'b0x1x:	begin			//IMEM Write
+		4'b0?1?:	begin			//IMEM Write
 			StoreMaskDMEM = 	4'b0000;
 			StoreMaskIMEM = 	StoreMask;
 			StoreMaskIO = 		4'b0000;
