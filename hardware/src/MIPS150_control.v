@@ -29,7 +29,9 @@ module MIPS150_control(
 	 output	reg [1:0]	MemWrite,
 	 output  reg			MemtoReg,
 	 output	reg			LUItoReg,
-	 output	reg			SignOrZero
+	 output	reg			SignOrZero,
+	 output	reg			ALUSrc,
+	 output	reg			RegDst
     );
 
 wire [5:0]	opcode, funct;
@@ -49,7 +51,8 @@ ALUdec MIPS150_aludec(
 //generate rest of the control signals
 always@(*) begin
 	case(opcode)
-		// Load/store
+		
+		// Load/store Instructions
 		
 		/*********************/
 		//MemAlign 00 => Byte
@@ -62,6 +65,8 @@ always@(*) begin
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`LH:	begin
 					RegWrite = 1'b1;
@@ -69,6 +74,8 @@ always@(*) begin
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`LW:	begin
 					RegWrite = 1'b1;
@@ -76,6 +83,8 @@ always@(*) begin
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`LBU:	begin
 					RegWrite = 1'b1;
@@ -83,6 +92,8 @@ always@(*) begin
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`LHU:	begin
 					RegWrite = 1'b1;
@@ -90,6 +101,8 @@ always@(*) begin
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`SB:	begin
 					RegWrite = 1'b0;
@@ -97,6 +110,8 @@ always@(*) begin
 					MemWrite = 2'b01;
 					MemtoReg = 1'bx;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`SH:	begin
 					RegWrite = 1'b0;
@@ -104,6 +119,8 @@ always@(*) begin
 					MemWrite = 2'b10;
 					MemtoReg = 1'bx;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		`SW:	begin
 					RegWrite = 1'b0;
@@ -111,6 +128,8 @@ always@(*) begin
 					MemWrite = 2'b11;
 					MemtoReg = 1'bx;
 					SignOrZero = 1'b1;
+					ALUSrc = 1'b1;
+					RegDst = 1'b0;
 				end
 		 
 		 // I-type Computational Instructions
@@ -120,6 +139,8 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'b1;
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
 		 `LUI:	begin
 						RegWrite = 1'b1;
@@ -127,6 +148,8 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'bx;	//TODO: is 1'bx ok here?
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
 		 `SLTI:	begin
 						RegWrite = 1'b1;
@@ -134,6 +157,8 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'b1;
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
 		 `SLTIU:	begin
 						RegWrite = 1'b1;
@@ -141,6 +166,8 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'b1;
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
 		 `ANDI:	begin
 						RegWrite = 1'b1;
@@ -148,6 +175,8 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'b0;
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
 		 `ORI:	begin
 						RegWrite = 1'b1;
@@ -155,6 +184,8 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'b0;
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
 		 `XORI:	begin
 		 				RegWrite = 1'b1;
@@ -162,9 +193,22 @@ always@(*) begin
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
 						SignOrZero = 1'b0;
+						ALUSrc = 1'b1;
+						RegDst = 1'b0;
 					end
-			
-		
+					
+		// R-type Computational Instructions
+		 `RTYPE:	begin
+						RegWrite = 1'b1;
+						Mask = 3'bxxx;
+						MemWrite = 2'b00;
+						MemtoReg = 1'b0;
+						SignOrZero = 1'bx;
+						ALUSrc = 1'b0;
+						RegDst = 1'b1;
+					end
+
+					
 		 default:	begin
 					//TODO: add default values for all signals
 					RegWrite = 1'b0;
@@ -172,6 +216,8 @@ always@(*) begin
 					MemWrite = 2'b00;
 					MemtoReg = 1'bx;		//TODO: put don't care or 0 or 1?
 					SignOrZero = 1'bx;
+					ALUSrc = 1'bx;
+					RegDst = 1'bx;
 		 end
 		 
 		 

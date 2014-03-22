@@ -31,9 +31,9 @@ module ALUdec(
 				`SLL:		ALUop = `ALU_SLL;
 				`SRL:		ALUop = `ALU_SRL;
 				`SRA:		ALUop = `ALU_SRA;
-				`SLLV:		ALUop = `ALU_SLL;		//Peter: not sure. 1/19/2014, should be correct
-				`SRLV:		ALUop = `ALU_SRL;		//Peter: not sure. 1/19/2014, should be correct
-				`SRAV:		ALUop = `ALU_SRA;		//Peter: not sure. 1/19/2014, should be correct
+				`SLLV:		ALUop = `ALU_SLL;		//Peter: not sure. 1/19/2014, should be correct. 3/22/2014 Yes, it's right.
+				`SRLV:		ALUop = `ALU_SRL;		//Peter: not sure. 1/19/2014, should be correct. 3/22/2014 Yes, it's right.
+				`SRAV:		ALUop = `ALU_SRA;		//Peter: not sure. 1/19/2014, should be correct. 3/22/2014 Yes, it's right.
 				`ADDU:		ALUop = `ALU_ADDU;
 				`SUBU:		ALUop = `ALU_SUBU;
 				`AND:		ALUop = `ALU_AND;

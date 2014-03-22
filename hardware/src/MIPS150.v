@@ -17,6 +17,8 @@ wire  [1:0]		MemWrite;
 wire				MemtoReg;
 wire				LUItoReg;
 wire				SignOrZero;
+wire				ALUSrc;
+wire				RegDst;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -29,7 +31,9 @@ MIPS150_datapath mips_datapath(
 	.MemWrite	(MemWrite),
 	.MemtoReg	(MemtoReg),
 	.LUItoReg	(LUItoReg),
-	.SignOrZero	(SignOrZero)
+	.SignOrZero	(SignOrZero),
+	.ALUSrc		(ALUSrc),
+	.RegDst		(RegDst)
 );
 
 
@@ -42,7 +46,9 @@ MIPS150_control mips_control(
 	 .MemWrite		(MemWrite),
 	 .MemtoReg		(MemtoReg),
 	 .LUItoReg		(LUItoReg),
-	 .SignOrZero	(SignOrZero)
+	 .SignOrZero	(SignOrZero),
+	 .ALUSrc			(ALUSrc),
+	 .RegDst			(RegDst)
 );
 
 endmodule

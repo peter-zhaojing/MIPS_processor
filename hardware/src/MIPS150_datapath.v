@@ -30,7 +30,9 @@ module MIPS150_datapath(
 	 input	[1:0]		MemWrite,
 	 input				MemtoReg,
 	 input				LUItoReg,
-	 input				SignOrZero
+	 input				SignOrZero,
+	 input				ALUSrc,
+	 input				RegDst
     );
 
 /**********************************************************/
@@ -66,6 +68,8 @@ wire	[31:0]	SignOutImmX;
 wire	[31:0]	ZeroOutImmX;
 wire				SignOrZeroX;
 wire	[31:0]	PostSorZImmX;
+wire				ALUSrcX;
+wire				RegDstX;
 
 
 //M stage
@@ -96,8 +100,11 @@ assign MemWriteX		= MemWrite;
 assign MemtoRegX		= MemtoReg;
 assign LUItoRegX		= LUItoReg;
 assign SignOrZeroX	= SignOrZero;
+assign ALUSrcX			= ALUSrc;
+assign RegDstX			= RegDst;
 
-assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
+//assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
+assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
 
 /**********************************************************/
 //I stage datapath
@@ -161,11 +168,15 @@ assign PostSorZImmX = SignOrZeroX ? SignOutImmX : ZeroOutImmX;
 
 assign SrcAX = RFout1;
 //assign SrcBX = RFout2;
-assign SrcBX = PostSorZImmX;
+//assign SrcBX = PostSorZImmX;
+//model Mux to choose SrcB from Imm or RegisterFile
+assign SrcBX = ALUSrcX ? PostSorZImmX : RFout2;
 
 
 //Register write address
-assign WriteRegX = InstrX[20:16];
+//assign WriteRegX = InstrX[20:16];
+//model Mux to choose write address. For R-type, choose InstrX[15:11]. For I-type, choose InstrX[20:16]
+assign WriteRegX = RegDstX ? InstrX[15:11] : InstrX[20:16];
 
 
 //For Byte, Half, Word, Address is same at this point because DMEM is word-addressable. Masks will be applied on Dout to address BYTE, HALF or WORD
