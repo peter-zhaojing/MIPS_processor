@@ -9,7 +9,11 @@ lw $t1, 2147483660($0)		#read IO
 lb $t2, 1($0)
 lbu $t3, 1($0)
 addiu $t4, $t0, 1
-
+slti $t5, $t0, 3648
+sltiu $t6, $t0, 3648
+andi $t7, $t1, 49392
+ori	$t8, $t1, 49392
+xori $t9, $t1, 49392
 
 #sw $t0, 268435464($0)		#sw DMEM address8
 #sw $t0, 536870916($0)		#sw IMEM address4

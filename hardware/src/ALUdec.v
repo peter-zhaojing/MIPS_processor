@@ -52,12 +52,12 @@ module ALUdec(
 		// I-type
 		`ADDIU:		ALUop = `ALU_ADDU;
 		`SLTI:		ALUop = `ALU_SLT;
-		`SLTIU:		ALUop = `ALU_SLT;
+		`SLTIU:		ALUop = `ALU_SLTU;
 		`ANDI:		ALUop = `ALU_AND;
-		`ORI:		ALUop = `ALU_OR;
+		`ORI:			ALUop = `ALU_OR;
 		`XORI:		ALUop = `ALU_XOR;
-		`LUI:		ALUop = `ALU_LUI;			//Peter: Load upper immediate; The immediate value is shifted left 16 bits and stored in the register. The lower 16 bits are zeroes.
-		default:	ALUop = 4'bx;
+		`LUI:			ALUop = `ALU_LUI;			//Peter: Load upper immediate; The immediate value is shifted left 16 bits and stored in the register. The lower 16 bits are zeroes.
+		default:		ALUop = 4'bx;
 	endcase
   
   end

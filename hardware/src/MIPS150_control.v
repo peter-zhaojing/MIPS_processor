@@ -28,7 +28,8 @@ module MIPS150_control(
 	 output	reg [2:0]	Mask,
 	 output	reg [1:0]	MemWrite,
 	 output  reg			MemtoReg,
-	 output	reg			LUItoReg
+	 output	reg			LUItoReg,
+	 output	reg			SignOrZero
     );
 
 wire [5:0]	opcode, funct;
@@ -60,48 +61,56 @@ always@(*) begin
 					Mask = 3'b000;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
+					SignOrZero = 1'b1;
 				end
 		`LH:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b001;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
+					SignOrZero = 1'b1;
 				end
 		`LW:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b010;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
+					SignOrZero = 1'b1;
 				end
 		`LBU:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b011;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
+					SignOrZero = 1'b1;
 				end
 		`LHU:	begin
 					RegWrite = 1'b1;
 					Mask = 3'b100;
 					MemWrite = 2'b00;
 					MemtoReg = 1'b1;
+					SignOrZero = 1'b1;
 				end
 		`SB:	begin
 					RegWrite = 1'b0;
 					Mask = 3'bxxx;
 					MemWrite = 2'b01;
 					MemtoReg = 1'bx;
+					SignOrZero = 1'b1;
 				end
 		`SH:	begin
 					RegWrite = 1'b0;
 					Mask = 3'bxxx;
 					MemWrite = 2'b10;
 					MemtoReg = 1'bx;
+					SignOrZero = 1'b1;
 				end
 		`SW:	begin
 					RegWrite = 1'b0;
 					Mask = 3'bxxx;
 					MemWrite = 2'b11;
 					MemtoReg = 1'bx;
+					SignOrZero = 1'b1;
 				end
 		 
 		 // I-type Computational Instructions
@@ -110,13 +119,51 @@ always@(*) begin
 						Mask = 3'bxxx;
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
+						SignOrZero = 1'b1;
 					end
 		 `LUI:	begin
 						RegWrite = 1'b1;
 						Mask = 3'bxxx;
 						MemWrite = 2'b00;
 						MemtoReg = 1'b0;
+						SignOrZero = 1'bx;	//TODO: is 1'bx ok here?
 					end
+		 `SLTI:	begin
+						RegWrite = 1'b1;
+						Mask = 3'bxxx;
+						MemWrite = 2'b00;
+						MemtoReg = 1'b0;
+						SignOrZero = 1'b1;
+					end
+		 `SLTIU:	begin
+						RegWrite = 1'b1;
+						Mask = 3'bxxx;
+						MemWrite = 2'b00;
+						MemtoReg = 1'b0;
+						SignOrZero = 1'b1;
+					end
+		 `ANDI:	begin
+						RegWrite = 1'b1;
+						Mask = 3'bxxx;
+						MemWrite = 2'b00;
+						MemtoReg = 1'b0;
+						SignOrZero = 1'b0;
+					end
+		 `ORI:	begin
+						RegWrite = 1'b1;
+						Mask = 3'bxxx;
+						MemWrite = 2'b00;
+						MemtoReg = 1'b0;
+						SignOrZero = 1'b0;
+					end
+		 `XORI:	begin
+		 				RegWrite = 1'b1;
+						Mask = 3'bxxx;
+						MemWrite = 2'b00;
+						MemtoReg = 1'b0;
+						SignOrZero = 1'b0;
+					end
+			
 		
 		 default:	begin
 					//TODO: add default values for all signals
@@ -124,6 +171,7 @@ always@(*) begin
 					Mask = 3'bxxx;
 					MemWrite = 2'b00;
 					MemtoReg = 1'bx;		//TODO: put don't care or 0 or 1?
+					SignOrZero = 1'bx;
 		 end
 		 
 		 

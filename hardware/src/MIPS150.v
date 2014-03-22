@@ -16,6 +16,7 @@ wire	[2:0]		Mask;
 wire  [1:0]		MemWrite;
 wire				MemtoReg;
 wire				LUItoReg;
+wire				SignOrZero;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -27,7 +28,8 @@ MIPS150_datapath mips_datapath(
 	.Mask			(Mask),
 	.MemWrite	(MemWrite),
 	.MemtoReg	(MemtoReg),
-	.LUItoReg	(LUItoReg)
+	.LUItoReg	(LUItoReg),
+	.SignOrZero	(SignOrZero)
 );
 
 
@@ -39,7 +41,8 @@ MIPS150_control mips_control(
 	 .Mask			(Mask),
 	 .MemWrite		(MemWrite),
 	 .MemtoReg		(MemtoReg),
-	 .LUItoReg		(LUItoReg)
+	 .LUItoReg		(LUItoReg),
+	 .SignOrZero	(SignOrZero)
 );
 
 endmodule

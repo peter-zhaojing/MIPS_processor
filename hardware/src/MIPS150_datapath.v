@@ -29,7 +29,8 @@ module MIPS150_datapath(
 	 input	[2:0]		Mask,
 	 input	[1:0]		MemWrite,
 	 input				MemtoReg,
-	 input				LUItoReg
+	 input				LUItoReg,
+	 input				SignOrZero
     );
 
 /**********************************************************/
@@ -61,6 +62,10 @@ wire				LoadDMEMorIOX;
 wire				MemtoRegX;
 wire	[15:0]	ImmX;
 wire				LUItoRegX;
+wire	[31:0]	SignOutImmX;
+wire	[31:0]	ZeroOutImmX;
+wire				SignOrZeroX;
+wire	[31:0]	PostSorZImmX;
 
 
 //M stage
@@ -90,6 +95,9 @@ assign MaskX			= Mask;
 assign MemWriteX		= MemWrite;
 assign MemtoRegX		= MemtoReg;
 assign LUItoRegX		= LUItoReg;
+assign SignOrZeroX	= SignOrZero;
+
+assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
 
 /**********************************************************/
 //I stage datapath
@@ -140,12 +148,23 @@ ALU MIPS150_alu(
     .Out		(ALUOutX)
 );
 
+//model Sign Extension
+assign SignOutImmX = {{16{InstrX[15]}},InstrX[15:0]};
+
+//model Zero Extension
+assign ZeroOutImmX = {16'b0,InstrX[15:0]};
+
+//model Mux to choose Sign Extension or Zero Extension
+assign PostSorZImmX = SignOrZeroX ? SignOutImmX : ZeroOutImmX;
+
+
+
 assign SrcAX = RFout1;
 //assign SrcBX = RFout2;
+assign SrcBX = PostSorZImmX;
 
-//model Sign Extention
-assign SrcBX = {{16{InstrX[15]}},InstrX[15:0]};
 
+//Register write address
 assign WriteRegX = InstrX[20:16];
 
 

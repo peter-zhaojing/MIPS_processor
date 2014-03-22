@@ -23,16 +23,16 @@ always@(*)	begin
 	case(ALUop)
 		`ALU_ADDU:		Out = A + B;
 		`ALU_SUBU:		Out = A - B;
-		`ALU_SLT:		Out = (A < B)? 16'h0001 : 16'h0000;		//Peter: Set on less than (signed)
-		`ALU_SLTU:		Out = (A < B)? 16'h0001 : 16'h0000;		//Peter: Set on less than unsigned
+		`ALU_SLT:		Out = ($signed(A) < $signed(B)) ? 32'h00000001 : 32'h00000000;		//Peter: Set on less than (signed)
+		`ALU_SLTU:		Out = (A < B)? 32'h00000001 : 32'h00000000;								//Peter: Set on less than unsigned
 		`ALU_AND:		Out = A & B;
-		`ALU_OR:		Out = A | B;
+		`ALU_OR:			Out = A | B;
 		`ALU_XOR:		Out = A ^ B;
-		`ALU_LUI:		Out = {B[15:0],16'b0};						//Load upper immediate
+		`ALU_LUI:		Out = {B[15:0],16'b0};				//Load upper immediate
 		`ALU_SLL:		Out = A << B;							//Peter: not sure!! Shift left logical, sll $d, $t, h ($d = $t << h)
 		`ALU_SRL:		Out = A >> B;							//Peter: not sure!! Shift right logical. Zeroes are shifted in.
 																
-																//Don¡¯t worry about sign extensions, they should take place outside of the ALU.
+																		//Don¡¯t worry about sign extensions, they should take place outside of the ALU.
 		`ALU_SRA:		Out = A >> B;							//Peter: not sure!! Shift right arithmetic. The sign bit is shifted in.
 		`ALU_NOR:		Out = ~(A | B);
 		default:		Out = 32'bx;
