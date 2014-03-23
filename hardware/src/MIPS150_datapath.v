@@ -71,6 +71,10 @@ wire	[31:0]	PostSorZImmX;
 wire				ALUSrcX;
 wire				RegDstX;
 wire				VarOrShamtX;
+wire				ForwardAX;
+wire				ForwardBX;
+wire	[31:0]	ForwardAOutX;
+wire	[31:0]	ForwardBOutX;
 
 
 //M stage
@@ -169,13 +173,19 @@ assign PostSorZImmX = SignOrZeroX ? SignOutImmX : ZeroOutImmX;
 
 //model Mux to choose SrcA from RegisterFile or Shamt
 //assign SrcAX = RFout1
-assign SrcAX = VarOrShamtX ? RFout1 : InstrX[10:6];
+assign SrcAX = VarOrShamtX ? ForwardAOutX : InstrX[10:6];
 
 
 //assign SrcBX = RFout2;
 //assign SrcBX = PostSorZImmX;
 //model Mux to choose SrcB from Imm or RegisterFile
-assign SrcBX = ALUSrcX ? PostSorZImmX : RFout2;
+assign SrcBX = ALUSrcX ? PostSorZImmX : ForwardBOutX;
+
+
+//model two MUXs for Data Forwarding
+assign ForwardAOutX = ForwardAX ?	ALUOutM : RFout1;
+assign ForwardBOutX = ForwardBX ?	ALUOutM : RFout2;
+
 
 
 //Register write address
@@ -295,6 +305,19 @@ assign ResultDMEMorIOM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
 
 //Another MUX used to select signal from DMEM/IO or ALUOutM
 assign ResultM = MemtoRegM? ResultDMEMorIOM : ALUOutM;
+
+
+/***********************************************************/
+//Hazard Unit
+/***********************************************************/
+HazardUnit MIPS150_hazardunit(
+	.Rs			(InstrX[25:21]),
+	.Rt			(InstrX[20:16]),
+	.RegWrite	(RegWriteM),
+	.WriteReg	(WriteRegM),
+	.ForwardA	(ForwardAX),
+	.ForwardB	(ForwardBX)
+);
 
 
 /***********************************************************/
