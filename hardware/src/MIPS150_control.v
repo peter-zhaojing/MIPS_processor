@@ -31,7 +31,8 @@ module MIPS150_control(
 	 output	reg			LUItoReg,
 	 output	reg			SignOrZero,
 	 output	reg			ALUSrc,
-	 output	reg			RegDst
+	 output	reg			RegDst,
+	 output	reg			VarOrShamt
     );
 
 wire [5:0]	opcode, funct;
@@ -67,6 +68,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`LH:	begin
 					RegWrite = 1'b1;
@@ -76,6 +78,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`LW:	begin
 					RegWrite = 1'b1;
@@ -85,6 +88,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`LBU:	begin
 					RegWrite = 1'b1;
@@ -94,6 +98,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`LHU:	begin
 					RegWrite = 1'b1;
@@ -103,6 +108,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`SB:	begin
 					RegWrite = 1'b0;
@@ -112,6 +118,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`SH:	begin
 					RegWrite = 1'b0;
@@ -121,6 +128,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		`SW:	begin
 					RegWrite = 1'b0;
@@ -130,6 +138,7 @@ always@(*) begin
 					SignOrZero = 1'b1;
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
+					VarOrShamt = 1'b1;
 				end
 		 
 		 // I-type Computational Instructions
@@ -141,6 +150,7 @@ always@(*) begin
 						SignOrZero = 1'b1;
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 		 `LUI:	begin
 						RegWrite = 1'b1;
@@ -150,6 +160,7 @@ always@(*) begin
 						SignOrZero = 1'bx;	//TODO: is 1'bx ok here?
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 		 `SLTI:	begin
 						RegWrite = 1'b1;
@@ -159,6 +170,7 @@ always@(*) begin
 						SignOrZero = 1'b1;
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 		 `SLTIU:	begin
 						RegWrite = 1'b1;
@@ -168,6 +180,7 @@ always@(*) begin
 						SignOrZero = 1'b1;
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 		 `ANDI:	begin
 						RegWrite = 1'b1;
@@ -177,6 +190,7 @@ always@(*) begin
 						SignOrZero = 1'b0;
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 		 `ORI:	begin
 						RegWrite = 1'b1;
@@ -186,6 +200,7 @@ always@(*) begin
 						SignOrZero = 1'b0;
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 		 `XORI:	begin
 		 				RegWrite = 1'b1;
@@ -195,17 +210,36 @@ always@(*) begin
 						SignOrZero = 1'b0;
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
+						VarOrShamt = 1'b1;
 					end
 					
 		// R-type Computational Instructions
 		 `RTYPE:	begin
-						RegWrite = 1'b1;
-						Mask = 3'bxxx;
-						MemWrite = 2'b00;
-						MemtoReg = 1'b0;
-						SignOrZero = 1'bx;
-						ALUSrc = 1'b0;
-						RegDst = 1'b1;
+						case (funct)
+							`SLLV, `SRLV, `SRAV, `ADDU, `SUBU, `AND, `OR, `XOR, `NOR, `SLT, `SLTU:	begin
+								//SLLV, SRLV, SRAV, ADDU, SUBU, AND, OR, XOR, NOR, SLT, SLTU. They use value from RegisterFile
+								RegWrite = 1'b1;
+								Mask = 3'bxxx;
+								MemWrite = 2'b00;
+								MemtoReg = 1'b0;
+								SignOrZero = 1'bx;
+								ALUSrc = 1'b0;
+								RegDst = 1'b1;
+								VarOrShamt = 1'b1;
+							end
+							
+							`SLL, `SRL, `SRA:	begin
+								//SLL, SRL, SRA. They use shamt
+								RegWrite = 1'b1;
+								Mask = 3'bxxx;
+								MemWrite = 2'b00;
+								MemtoReg = 1'b0;
+								SignOrZero = 1'bx;
+								ALUSrc = 1'b0;
+								RegDst = 1'b1;
+								VarOrShamt = 1'b0;
+							end
+						endcase
 					end
 
 					
@@ -218,6 +252,7 @@ always@(*) begin
 					SignOrZero = 1'bx;
 					ALUSrc = 1'bx;
 					RegDst = 1'bx;
+					VarOrShamt = 1'bx;
 		 end
 		 
 		 

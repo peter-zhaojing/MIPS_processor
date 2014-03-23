@@ -5,7 +5,7 @@ _start:
 
 # Test 1
 lw $t0, 268435456($0)		#read DMEM address0
-lw $t1, 2147483660($0)		#read IO
+lw $t1, 268435460($0)		#read DMEM address1
 lb $t2, 1($0)
 lbu $t3, 1($0)
 addiu $t4, $t0, 1
@@ -17,6 +17,12 @@ xor $t9, $t0, $t1
 nor $s0, $t0, $t1
 slt $s1, $t0, $t1
 sltu $s2, $t0, $t1
+sll $s3, $t0, 5
+srl $s4, $t0, 5
+sra $s5, $t0, 5
+sllv $s6, $t0, $t1
+srlv $s7, $t0, $t1
+srav $t3, $t0, $t1
 
 # Test 1
 #lw $t0, 268435456($0)		#read DMEM address0

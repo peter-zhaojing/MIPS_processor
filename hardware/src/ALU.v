@@ -29,11 +29,9 @@ always@(*)	begin
 		`ALU_OR:			Out = A | B;
 		`ALU_XOR:		Out = A ^ B;
 		`ALU_LUI:		Out = {B[15:0],16'b0};				//Load upper immediate
-		`ALU_SLL:		Out = A << B;							//Shift left logical, sll $d, $t, h ($d = $t << h)
-		`ALU_SRL:		Out = A >> B;							//Shift right logical. Zeroes are shifted in.
-																
-																		//Don¡¯t worry about sign extensions, they should take place outside of the ALU.
-		`ALU_SRA:		Out = A >> B;							//Peter: not sure!! Shift right arithmetic. The sign bit is shifted in.
+		`ALU_SLL:		Out = B << A;							//Shift left logical, sll $d, $t, h ($d = $t << h). Zeros are shifted in.
+		`ALU_SRL:		Out = B >> A;							//Shift right logical. Zeroes are shifted in.
+		`ALU_SRA:		Out = $signed(B) >>> A;				//Shift right arithmetic. The sign bit is shifted in.
 		`ALU_NOR:		Out = ~(A | B);
 		default:		Out = 32'bx;
 	endcase

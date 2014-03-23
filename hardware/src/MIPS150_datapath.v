@@ -32,7 +32,8 @@ module MIPS150_datapath(
 	 input				LUItoReg,
 	 input				SignOrZero,
 	 input				ALUSrc,
-	 input				RegDst
+	 input				RegDst,
+	 input				VarOrShamt
     );
 
 /**********************************************************/
@@ -62,7 +63,6 @@ wire	[3:0]		StoreMaskIMEMX;
 wire	[3:0]		StoreMaskIOX;
 wire				LoadDMEMorIOX;
 wire				MemtoRegX;
-wire	[15:0]	ImmX;
 wire				LUItoRegX;
 wire	[31:0]	SignOutImmX;
 wire	[31:0]	ZeroOutImmX;
@@ -70,6 +70,7 @@ wire				SignOrZeroX;
 wire	[31:0]	PostSorZImmX;
 wire				ALUSrcX;
 wire				RegDstX;
+wire				VarOrShamtX;
 
 
 //M stage
@@ -102,6 +103,7 @@ assign LUItoRegX		= LUItoReg;
 assign SignOrZeroX	= SignOrZero;
 assign ALUSrcX			= ALUSrc;
 assign RegDstX			= RegDst;
+assign VarOrShamtX	= VarOrShamt;
 
 //assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
 assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
@@ -165,8 +167,11 @@ assign ZeroOutImmX = {16'b0,InstrX[15:0]};
 assign PostSorZImmX = SignOrZeroX ? SignOutImmX : ZeroOutImmX;
 
 
+//model Mux to choose SrcA from RegisterFile or Shamt
+//assign SrcAX = RFout1
+assign SrcAX = VarOrShamtX ? RFout1 : InstrX[10:6];
 
-assign SrcAX = RFout1;
+
 //assign SrcBX = RFout2;
 //assign SrcBX = PostSorZImmX;
 //model Mux to choose SrcB from Imm or RegisterFile
@@ -234,9 +239,6 @@ MemoryMap MIPS150_memmap(
 	.StoreMaskIO		(StoreMaskIOX),
 	.LoadDMEMorIO		(LoadDMEMorIOX)
 );
-
-//LUI
-assign ImmX = InstrX[15:0];
 
 
 /***********************************************************/
