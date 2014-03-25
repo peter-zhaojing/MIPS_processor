@@ -33,7 +33,7 @@ always@(*)	begin
 		`ALU_SRL:		Out = B >> A;							//Shift right logical. Zeroes are shifted in.
 		`ALU_SRA:		Out = $signed(B) >>> A;				//Shift right arithmetic. The sign bit is shifted in.
 		`ALU_NOR:		Out = ~(A | B);
-		default:		Out = 32'bx;
+		default:		Out = 32'hxxxxxxxx;
 	endcase
 
 end

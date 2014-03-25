@@ -33,7 +33,8 @@ module MIPS150_datapath(
 	 input				SignOrZero,
 	 input				ALUSrc,
 	 input				RegDst,
-	 input				VarOrShamt
+	 input				VarOrShamt,
+	 input	[2:0]		BranchCtrl
     );
 
 /**********************************************************/
@@ -44,6 +45,8 @@ module MIPS150_datapath(
 wire	[31:0]	InstrI;	
 reg	[31:0]	PC_OUT;
 wire	[31:0]	PC_IN;
+wire	[31:0]	PCPlus4I;
+reg				PCStarterI;
 
 
 //X stage
@@ -75,7 +78,9 @@ wire				ForwardAX;
 wire				ForwardBX;
 wire	[31:0]	ForwardAOutX;
 wire	[31:0]	ForwardBOutX;
-
+wire	[2:0]		BranchCtrlX;
+reg	[31:0]	PCPlus4X;
+wire	[31:0]	PCBranchX;
 
 //M stage
 reg				RegWriteM;
@@ -93,6 +98,7 @@ reg				LoadDMEMorIOM;
 wire	[31:0]	ResultDMEMorIOM;
 wire	[31:0]	DataFromIOM;				//dummy data from IO
 reg				MemtoRegM;
+reg				PCSrcX;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -108,6 +114,7 @@ assign SignOrZeroX	= SignOrZero;
 assign ALUSrcX			= ALUSrc;
 assign RegDstX			= RegDst;
 assign VarOrShamtX	= VarOrShamt;
+assign BranchCtrlX	= BranchCtrl;
 
 //assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
 assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
@@ -116,13 +123,23 @@ assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
 //I stage datapath
 /**********************************************************/
 
+//model PCStarter
+always@(posedge clk) begin
+	if(rst)	PCStarterI	<= 1'b0;
+	else		PCStarterI	<= 1'b1;
+end
+
+
 //model PC
-always@(posedge clk)
+always@(posedge clk)	begin
 	if(rst)	PC_OUT	<=	32'h0000_0000;
 	else		PC_OUT	<=	PC_IN;
+end
+
+assign PCPlus4I = PC_OUT + 32'd4;
 
 //model PC+4
-assign PC_IN = PC_OUT + 32'd4;
+assign PC_IN = (PCSrcX & PCStarterI) ? PCBranchX : PCPlus4I;
 
 //instantiate IMEM
 IMEM_blk_ram	MIPS150_imem(
@@ -186,6 +203,22 @@ assign SrcBX = ALUSrcX ? PostSorZImmX : ForwardBOutX;
 assign ForwardAOutX = ForwardAX ?	ALUOutM : RFout1;
 assign ForwardBOutX = ForwardBX ?	ALUOutM : RFout2;
 
+
+//model Branch Detection circuit
+always @(*) begin
+	case (BranchCtrlX)
+		3'b000:	PCSrcX = (ALUOutX == 32'h0000_0000);			//BEQ
+		3'b001:	PCSrcX = (ALUOutX != 32'h0000_0000);			//BNE
+		3'b010:	PCSrcX = ($signed(SrcAX) <= 32'h0000_0000);	//BLEZ
+		3'b011:	PCSrcX = ($signed(SrcAX) > 32'h0000_0000);	//BGTZ
+		3'b100:	PCSrcX = ($signed(SrcAX) < 32'h0000_0000);	//BLTZ
+		3'b101:	PCSrcX = ($signed(SrcAX) >= 32'h0000_0000);	//BGEZ
+		default:	PCSrcX = 1'b0;
+	endcase
+end
+
+//model Branch Address
+assign PCBranchX = PCPlus4X + (SignOutImmX << 2'd2);
 
 
 //Register write address
@@ -324,7 +357,10 @@ HazardUnit MIPS150_hazardunit(
 //I-X Pipeline Register
 /***********************************************************/
 always@(posedge clk)	begin
-	if(!rst)	InstrX	<=	InstrI;
+	if(!rst)	begin
+		InstrX	<=	InstrI;
+		PCPlus4X <= PCPlus4I;
+	end
 end
 
 /***********************************************************/

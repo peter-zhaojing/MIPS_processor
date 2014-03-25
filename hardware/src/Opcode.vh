@@ -20,6 +20,17 @@
 `define ORI     6'b001101
 `define XORI    6'b001110
 `define LUI     6'b001111 
+// Jump
+`define J		 6'b000010
+`define JAL   	 6'b000011
+// Branch
+`define BEQ		 6'b000100
+`define BNE		 6'b000101
+`define BLEZ	 6'b000110
+`define BGTZ	 6'b000111
+// BLTZ and BGEZ use special opcode 000001 for register immediate
+`define REGIMM  6'b000001
+
 
 // Funct (R-type)
 `define SLL     6'b000000
@@ -36,5 +47,13 @@
 `define NOR     6'b100111
 `define SLT     6'b101010
 `define SLTU    6'b101011
+//JR and JALR are R-type
+`define JR		 6'b001000
+`define JALR	 6'b001001
+
+//REGIMM BLTZ and BGEZ
+`define BLTZ 5'b00000
+`define BGEZ 5'b00001
+
 
 `endif //OPCODE

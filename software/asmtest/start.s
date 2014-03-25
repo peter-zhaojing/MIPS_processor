@@ -9,11 +9,19 @@ lw $t1, 268435460($0)		#read DMEM address1
 addiu $t4, $t1, 1
 addu $t5, $t4, $t4
 subu $t6, $t5, $t4
+beq $t0, $t1, target
 and $t7, $t6, $t1
 or	$t8, $t7, $t7
-xor $t9, $t8, $t1
-slt $s1, $t9, $t1
-sltu $s2, $s1, $t1
+#xor $t9, $t8, $t1
+#slt $s1, $t9, $t1
+#sltu $s2, $s1, $t1
+#bgez $t0, target
+
+target:
+addiu $t4, $t1, 1
+addu $t5, $t4, $t4
+
+
 
 # Test 1
 #lw $t0, 268435456($0)		#read DMEM address0

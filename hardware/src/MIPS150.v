@@ -20,6 +20,7 @@ wire				SignOrZero;
 wire				ALUSrc;
 wire				RegDst;
 wire				VarOrShamt;
+wire	[2:0]		BranchCtrl;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -35,7 +36,8 @@ MIPS150_datapath mips_datapath(
 	.SignOrZero	(SignOrZero),
 	.ALUSrc		(ALUSrc),
 	.RegDst		(RegDst),
-	.VarOrShamt	(VarOrShamt)
+	.VarOrShamt	(VarOrShamt),
+	.BranchCtrl	(BranchCtrl)
 );
 
 
@@ -51,7 +53,8 @@ MIPS150_control mips_control(
 	 .SignOrZero	(SignOrZero),
 	 .ALUSrc			(ALUSrc),
 	 .RegDst			(RegDst),
-	 .VarOrShamt	(VarOrShamt)
+	 .VarOrShamt	(VarOrShamt),
+	 .BranchCtrl	(BranchCtrl)
 );
 
 endmodule
