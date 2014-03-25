@@ -47,6 +47,7 @@ reg	[31:0]	PC_OUT;
 wire	[31:0]	PC_IN;
 wire	[31:0]	PCPlus4I;
 reg				PCStarterI;
+wire	[31:0]	PC_OUT_MUX;
 
 
 //X stage
@@ -79,7 +80,7 @@ wire				ForwardBX;
 wire	[31:0]	ForwardAOutX;
 wire	[31:0]	ForwardBOutX;
 wire	[2:0]		BranchCtrlX;
-reg	[31:0]	PCPlus4X;
+reg	[31:0]	PC_OUT_MUXX;
 wire	[31:0]	PCBranchX;
 
 //M stage
@@ -136,10 +137,12 @@ always@(posedge clk)	begin
 	else		PC_OUT	<=	PC_IN;
 end
 
-assign PCPlus4I = PC_OUT + 32'd4;
-
 //model PC+4
-assign PC_IN = (PCSrcX & PCStarterI) ? PCBranchX : PCPlus4I;
+assign PCPlus4I = PC_OUT_MUX + 32'd4;
+assign PC_IN = PCPlus4I;
+
+//model MUX for PC_OUT_MUX
+assign PC_OUT_MUX = (PCSrcX & PCStarterI) ? PCBranchX : PC_OUT;
 
 //instantiate IMEM
 IMEM_blk_ram	MIPS150_imem(
@@ -150,7 +153,7 @@ IMEM_blk_ram	MIPS150_imem(
 	.dina		(RFout2),			//The contents to be written, 32 bits wide
 	.clkb		(clk),
 	.enb		(~rst),
-	.addrb	(PC_OUT[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
+	.addrb	(PC_OUT_MUX[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
 	.doutb	(InstrI)
 );
 
@@ -218,7 +221,7 @@ always @(*) begin
 end
 
 //model Branch Address
-assign PCBranchX = PCPlus4X + (SignOutImmX << 2'd2);
+assign PCBranchX = PC_OUT_MUXX + (SignOutImmX << 2'd2);
 
 
 //Register write address
@@ -359,7 +362,7 @@ HazardUnit MIPS150_hazardunit(
 always@(posedge clk)	begin
 	if(!rst)	begin
 		InstrX	<=	InstrI;
-		PCPlus4X <= PCPlus4I;
+		PC_OUT_MUXX <= PC_OUT_MUX;
 	end
 end
 
