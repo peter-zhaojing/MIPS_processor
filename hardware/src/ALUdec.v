@@ -59,7 +59,7 @@ module ALUdec(
 		`LUI:			ALUop = `ALU_LUI;			//Peter: Load upper immediate; The immediate value is shifted left 16 bits and stored in the register. The lower 16 bits are zeroes.
 		
 		// Jump and Branch
-		`BEQ:			ALUop = `ALU_SUBU;
+		`BEQ, `BNE:			ALUop = `ALU_SUBU;
 		
 		default:		ALUop = 4'bxxxx;
 	endcase

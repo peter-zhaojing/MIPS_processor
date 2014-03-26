@@ -9,7 +9,7 @@ lw $t1, 268435460($0)		#read DMEM address1
 addiu $t4, $t1, 1
 addu $t5, $t4, $t4
 subu $t6, $t5, $t4
-beq $t0, $t1, target
+bgez $t1, target
 and $t7, $t6, $t1
 or	$t8, $t7, $t7
 #xor $t9, $t8, $t1

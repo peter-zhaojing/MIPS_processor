@@ -211,10 +211,10 @@ always @(*) begin
 	case (BranchCtrlX)
 		3'b000:	PCSrcX = (ALUOutX == 32'h0000_0000);			//BEQ
 		3'b001:	PCSrcX = (ALUOutX != 32'h0000_0000);			//BNE
-		3'b010:	PCSrcX = ($signed(SrcAX) <= 32'h0000_0000);	//BLEZ
-		3'b011:	PCSrcX = ($signed(SrcAX) > 32'h0000_0000);	//BGTZ
-		3'b100:	PCSrcX = ($signed(SrcAX) < 32'h0000_0000);	//BLTZ
-		3'b101:	PCSrcX = ($signed(SrcAX) >= 32'h0000_0000);	//BGEZ
+		3'b010:	PCSrcX = ($signed(SrcAX) <= $signed(32'h0000_0000));	//BLEZ
+		3'b011:	PCSrcX = ($signed(SrcAX) > $signed(32'h0000_0000));	//BGTZ
+		3'b100:	PCSrcX = ($signed(SrcAX) < $signed(32'h0000_0000));	//BLTZ
+		3'b101:	PCSrcX = ($signed(SrcAX) >= $signed(32'h0000_0000));	//BGEZ
 		default:	PCSrcX = 1'b0;
 	endcase
 end
