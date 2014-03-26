@@ -46,8 +46,7 @@ wire	[31:0]	InstrI;
 reg	[31:0]	PC_OUT;
 wire	[31:0]	PC_IN;
 wire	[31:0]	PCPlus4I;
-reg				PCStarterI;
-wire	[31:0]	PC_OUT_MUX;
+reg	[31:0]	PC_OUT_MUX;
 
 
 //X stage
@@ -124,13 +123,6 @@ assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
 //I stage datapath
 /**********************************************************/
 
-//model PCStarter
-always@(posedge clk) begin
-	if(rst)	PCStarterI	<= 1'b0;
-	else		PCStarterI	<= 1'b1;
-end
-
-
 //model PC
 always@(posedge clk)	begin
 	if(rst)	PC_OUT	<=	32'h0000_0000;
@@ -142,7 +134,14 @@ assign PCPlus4I = PC_OUT_MUX + 32'd4;
 assign PC_IN = PCPlus4I;
 
 //model MUX for PC_OUT_MUX
-assign PC_OUT_MUX = (PCSrcX & PCStarterI) ? PCBranchX : PC_OUT;
+//assign PC_OUT_MUX = (PCSrcX) ? PCBranchX : PC_OUT;
+always@(*)	begin
+	case (PCSrcX)
+		1'b1:	PC_OUT_MUX = PCBranchX;
+		1'b0:	PC_OUT_MUX = PC_OUT;
+		default:	PC_OUT_MUX = PC_OUT;
+	endcase
+end
 
 //instantiate IMEM
 IMEM_blk_ram	MIPS150_imem(
