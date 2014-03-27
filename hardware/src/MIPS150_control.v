@@ -33,7 +33,8 @@ module MIPS150_control(
 	 output	reg			ALUSrc,
 	 output	reg			RegDst,
 	 output	reg			VarOrShamt,
-	 output	reg [2:0]	BranchCtrl
+	 output	reg [2:0]	BranchCtrl,
+	 output	reg			Jump
     );
 
 wire [5:0]	opcode, funct;
@@ -71,6 +72,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`LH:	begin
 					RegWrite = 1'b1;
@@ -82,6 +84,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`LW:	begin
 					RegWrite = 1'b1;
@@ -93,6 +96,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`LBU:	begin
 					RegWrite = 1'b1;
@@ -104,6 +108,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`LHU:	begin
 					RegWrite = 1'b1;
@@ -115,6 +120,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`SB:	begin
 					RegWrite = 1'b0;
@@ -126,6 +132,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`SH:	begin
 					RegWrite = 1'b0;
@@ -137,6 +144,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		`SW:	begin
 					RegWrite = 1'b0;
@@ -148,6 +156,7 @@ always@(*) begin
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 				end
 		 
 		 // I-type Computational Instructions
@@ -161,6 +170,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 		 `LUI:	begin
 						RegWrite = 1'b1;
@@ -172,6 +182,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 		 `SLTI:	begin
 						RegWrite = 1'b1;
@@ -183,6 +194,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 		 `SLTIU:	begin
 						RegWrite = 1'b1;
@@ -194,6 +206,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 		 `ANDI:	begin
 						RegWrite = 1'b1;
@@ -205,6 +218,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 		 `ORI:	begin
 						RegWrite = 1'b1;
@@ -216,6 +230,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 		 `XORI:	begin
 		 				RegWrite = 1'b1;
@@ -227,6 +242,7 @@ always@(*) begin
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'bxxx;
+						Jump = 1'b0;
 					end
 					
 		// R-type Computational Instructions
@@ -243,6 +259,7 @@ always@(*) begin
 								RegDst = 1'b1;
 								VarOrShamt = 1'b1;
 								BranchCtrl = 3'bxxx;
+								Jump = 1'b0;
 							end
 							
 							`SLL, `SRL, `SRA:	begin
@@ -256,6 +273,7 @@ always@(*) begin
 								RegDst = 1'b1;
 								VarOrShamt = 1'b0;
 								BranchCtrl = 3'bxxx;
+								Jump = 1'b0;
 							end
 							
 							default:	begin
@@ -268,6 +286,7 @@ always@(*) begin
 								RegDst = 1'bx;
 								VarOrShamt = 1'bx;
 								BranchCtrl = 3'bxxx;
+								Jump = 1'b0;
 							end
 						endcase
 					end
@@ -283,6 +302,7 @@ always@(*) begin
 						RegDst = 1'bx;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b000;
+						Jump = 1'b0;
 					end
 		 `BNE:	begin
 						RegWrite = 1'b0;
@@ -294,6 +314,7 @@ always@(*) begin
 						RegDst = 1'bx;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b001;
+						Jump = 1'b0;
 					end
 		 `BLEZ:	begin
 						RegWrite = 1'b0;
@@ -305,6 +326,7 @@ always@(*) begin
 						RegDst = 1'bx;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b010;
+						Jump = 1'b0;
 					end		 
 		 `BGTZ:	begin
 						RegWrite = 1'b0;
@@ -316,6 +338,7 @@ always@(*) begin
 						RegDst = 1'bx;
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b011;
+						Jump = 1'b0;
 					end
 		 `REGIMM: begin	//BLTZ abd BGEZ
 						case (Instr[20:16])
@@ -329,6 +352,7 @@ always@(*) begin
 											RegDst = 1'bx;
 											VarOrShamt = 1'b1;
 											BranchCtrl = 3'b100;
+											Jump = 1'b0;
 										end
 							 `BGEZ:	begin
 							 				RegWrite = 1'b0;
@@ -340,6 +364,7 @@ always@(*) begin
 											RegDst = 1'bx;
 											VarOrShamt = 1'b1;
 											BranchCtrl = 3'b101;
+											Jump = 1'b0;
 										end
 							default:	begin
 											RegWrite = 1'b0;
@@ -351,10 +376,24 @@ always@(*) begin
 											RegDst = 1'bx;
 											VarOrShamt = 1'bx;
 											BranchCtrl = 3'bxxx;
+											Jump = 1'b0;
 										end
 						endcase
 					 end
-					
+					 
+		 `J:	begin
+					RegWrite = 1'b0;
+					Mask = 3'bxxx;
+					MemWrite = 2'b00;
+					MemtoReg = 1'bx;
+					SignOrZero = 1'bx;
+					ALUSrc = 1'bx;
+					RegDst = 1'bx;
+					VarOrShamt = 1'bx;
+					BranchCtrl = 3'bxxx;
+					Jump = 1'b1;
+				end
+		 
 		 default:	begin
 					//TODO: add default values for all signals
 					RegWrite = 1'b0;
@@ -366,6 +405,7 @@ always@(*) begin
 					RegDst = 1'bx;
 					VarOrShamt = 1'bx;
 					BranchCtrl = 3'bxxx;
+					Jump = 1'b0;
 		 end
 		 
 		 

@@ -34,7 +34,8 @@ module MIPS150_datapath(
 	 input				ALUSrc,
 	 input				RegDst,
 	 input				VarOrShamt,
-	 input	[2:0]		BranchCtrl
+	 input	[2:0]		BranchCtrl,
+	 input				Jump
     );
 
 /**********************************************************/
@@ -46,7 +47,8 @@ wire	[31:0]	InstrI;
 reg	[31:0]	PC_OUT;
 wire	[31:0]	PC_IN;
 wire	[31:0]	PCPlus4I;
-reg	[31:0]	PC_OUT_MUX;
+reg	[31:0]	PC_OUT_Branch;
+reg	[31:0]	PC_OUT_Jump;
 
 
 //X stage
@@ -81,6 +83,8 @@ wire	[31:0]	ForwardBOutX;
 wire	[2:0]		BranchCtrlX;
 reg	[31:0]	PC_OUT_MUXX;
 wire	[31:0]	PCBranchX;
+wire				JumpX;
+wire	[31:0]	JumpAddrX;
 
 //M stage
 reg				RegWriteM;
@@ -115,6 +119,7 @@ assign ALUSrcX			= ALUSrc;
 assign RegDstX			= RegDst;
 assign VarOrShamtX	= VarOrShamt;
 assign BranchCtrlX	= BranchCtrl;
+assign JumpX			= Jump;
 
 //assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
 assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
@@ -130,16 +135,25 @@ always@(posedge clk)	begin
 end
 
 //model PC+4
-assign PCPlus4I = PC_OUT_MUX + 32'd4;
+assign PCPlus4I = PC_OUT_Jump + 32'd4;
 assign PC_IN = PCPlus4I;
 
-//model MUX for PC_OUT_MUX
+//model MUX for Branch
 //assign PC_OUT_MUX = (PCSrcX) ? PCBranchX : PC_OUT;
 always@(*)	begin
 	case (PCSrcX)
-		1'b1:	PC_OUT_MUX = PCBranchX;
-		1'b0:	PC_OUT_MUX = PC_OUT;
-		default:	PC_OUT_MUX = PC_OUT;
+		1'b1:	PC_OUT_Branch = PCBranchX;
+		1'b0:	PC_OUT_Branch = PC_OUT;
+		default:	PC_OUT_Branch = PC_OUT;
+	endcase
+end
+
+//model MUX for Jump
+always@(*)	begin
+	case (JumpX)
+		1'b1:	PC_OUT_Jump = JumpAddrX;
+		1'b0: PC_OUT_Jump = PC_OUT_Branch;
+		default:	PC_OUT_Jump = PC_OUT_Branch;
 	endcase
 end
 
@@ -152,7 +166,7 @@ IMEM_blk_ram	MIPS150_imem(
 	.dina		(RFout2),			//The contents to be written, 32 bits wide
 	.clkb		(clk),
 	.enb		(~rst),
-	.addrb	(PC_OUT_MUX[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
+	.addrb	(PC_OUT_Jump[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
 	.doutb	(InstrI)
 );
 
@@ -221,6 +235,10 @@ end
 
 //model Branch Address
 assign PCBranchX = PC_OUT_MUXX + (SignOutImmX << 2'd2);
+
+//model Jump Address
+assign JumpAddrX = {PC_OUT[31:28],InstrX[25:0], 2'b0};
+
 
 
 //Register write address
@@ -361,7 +379,7 @@ HazardUnit MIPS150_hazardunit(
 always@(posedge clk)	begin
 	if(!rst)	begin
 		InstrX	<=	InstrI;
-		PC_OUT_MUXX <= PC_OUT_MUX;
+		PC_OUT_MUXX <= PC_OUT_Jump;
 	end
 end
 

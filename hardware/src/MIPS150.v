@@ -21,6 +21,7 @@ wire				ALUSrc;
 wire				RegDst;
 wire				VarOrShamt;
 wire	[2:0]		BranchCtrl;
+wire				Jump;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -37,7 +38,8 @@ MIPS150_datapath mips_datapath(
 	.ALUSrc		(ALUSrc),
 	.RegDst		(RegDst),
 	.VarOrShamt	(VarOrShamt),
-	.BranchCtrl	(BranchCtrl)
+	.BranchCtrl	(BranchCtrl),
+	.Jump			(Jump)
 );
 
 
@@ -54,7 +56,8 @@ MIPS150_control mips_control(
 	 .ALUSrc			(ALUSrc),
 	 .RegDst			(RegDst),
 	 .VarOrShamt	(VarOrShamt),
-	 .BranchCtrl	(BranchCtrl)
+	 .BranchCtrl	(BranchCtrl),
+	 .Jump			(Jump)
 );
 
 endmodule
