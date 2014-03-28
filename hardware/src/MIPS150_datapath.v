@@ -49,7 +49,7 @@ wire	[31:0]	PC_IN;
 wire	[31:0]	PCPlus4I;
 reg	[31:0]	PC_OUT_Branch;
 reg	[31:0]	PC_OUT_Jump;
-
+reg	[31:0]	PC_OUT_SyncIMEM;
 
 //X stage
 reg	[31:0]	InstrX;
@@ -81,7 +81,7 @@ wire				ForwardBX;
 wire	[31:0]	ForwardAOutX;
 wire	[31:0]	ForwardBOutX;
 wire	[2:0]		BranchCtrlX;
-reg	[31:0]	PC_OUT_MUXX;
+reg	[31:0]	PC_OUTX;
 wire	[31:0]	PCBranchX;
 wire				JumpX;
 wire	[31:0]	JumpAddrX;
@@ -156,6 +156,12 @@ always@(*)	begin
 		default:	PC_OUT_Jump = PC_OUT_Branch;
 	endcase
 end
+
+//model a register that used to sync up PC_OUT with corresponding instruction. It is necessary because IMEM is synchronous read.
+always@(posedge clk)	begin
+	if(!rst)	PC_OUT_SyncIMEM <= PC_OUT;
+end
+
 
 //instantiate IMEM
 IMEM_blk_ram	MIPS150_imem(
@@ -234,10 +240,10 @@ always @(*) begin
 end
 
 //model Branch Address
-assign PCBranchX = PC_OUT_MUXX + (SignOutImmX << 2'd2);
+assign PCBranchX = PC_OUTX + 32'd4 + (SignOutImmX << 2'd2);
 
 //model Jump Address
-assign JumpAddrX = {PC_OUT[31:28],InstrX[25:0], 2'b0};
+assign JumpAddrX = {PC_OUTX[31:28],InstrX[25:0], 2'b0};
 
 
 
@@ -379,7 +385,7 @@ HazardUnit MIPS150_hazardunit(
 always@(posedge clk)	begin
 	if(!rst)	begin
 		InstrX	<=	InstrI;
-		PC_OUT_MUXX <= PC_OUT_Jump;
+		PC_OUTX	<= PC_OUT_SyncIMEM;
 	end
 end
 
