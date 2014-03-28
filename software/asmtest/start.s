@@ -10,7 +10,7 @@ addiu $t4, $t1, 1
 addu $t5, $t4, $t4
 subu $t6, $t5, $t4
 #blez $t0, target
-j target
+jal target
 and $t7, $t6, $t1
 or	$t8, $t7, $t7
 #xor $t9, $t8, $t1

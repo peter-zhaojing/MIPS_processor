@@ -35,7 +35,8 @@ module MIPS150_datapath(
 	 input				RegDst,
 	 input				VarOrShamt,
 	 input	[2:0]		BranchCtrl,
-	 input				Jump
+	 input				Jump,
+	 input				JAL
     );
 
 /**********************************************************/
@@ -85,6 +86,8 @@ reg	[31:0]	PC_OUTX;
 wire	[31:0]	PCBranchX;
 wire				JumpX;
 wire	[31:0]	JumpAddrX;
+wire				JALX;
+wire	[4:0]		WriteRegRorIX;
 
 //M stage
 reg				RegWriteM;
@@ -103,6 +106,9 @@ wire	[31:0]	ResultDMEMorIOM;
 wire	[31:0]	DataFromIOM;				//dummy data from IO
 reg				MemtoRegM;
 reg				PCSrcX;
+reg				JALM;
+reg	[31:0]	PC_OUTM;
+wire	[31:0]	ResultDMEMorIOorALUOutM;
 
 /**********************************************************/
 //Connecting signals to module port
@@ -120,6 +126,7 @@ assign RegDstX			= RegDst;
 assign VarOrShamtX	= VarOrShamt;
 assign BranchCtrlX	= BranchCtrl;
 assign JumpX			= Jump;
+assign JALX				= JAL;
 
 //assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
 assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
@@ -250,8 +257,10 @@ assign JumpAddrX = {PC_OUTX[31:28],InstrX[25:0], 2'b0};
 //Register write address
 //assign WriteRegX = InstrX[20:16];
 //model Mux to choose write address. For R-type, choose InstrX[15:11]. For I-type, choose InstrX[20:16]
-assign WriteRegX = RegDstX ? InstrX[15:11] : InstrX[20:16];
+assign WriteRegRorIX = RegDstX ? InstrX[15:11] : InstrX[20:16];
 
+//model Mux to select R[31] for JAL instr
+assign WriteRegX = JALX ? 5'd31 : WriteRegRorIX;
 
 //For Byte, Half, Word, Address is same at this point because DMEM is word-addressable. Masks will be applied on Dout to address BYTE, HALF or WORD
 //assign ALUOutPadding = {ALUOutX[31:2],2'b0};
@@ -363,8 +372,10 @@ end
 assign ResultDMEMorIOM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
 
 //Another MUX used to select signal from DMEM/IO or ALUOutM
-assign ResultM = MemtoRegM? ResultDMEMorIOM : ALUOutM;
+assign ResultDMEMorIOorALUOutM = MemtoRegM ? ResultDMEMorIOM : ALUOutM;
 
+//Another MUX used to select signal from DMEM/IO/ALUOutM or PC+8 (for JAL instr)
+assign ResultM = JALM ? (PC_OUTM + 32'd8) : ResultDMEMorIOorALUOutM;
 
 /***********************************************************/
 //Hazard Unit
@@ -401,6 +412,8 @@ always@(posedge clk) begin
 		LoadDMEMorIOM 	<= LoadDMEMorIOX;
 		MemtoRegM		<= MemtoRegX;
 		ALUOutM			<= ALUOutX;
+		JALM				<= JALX;
+		PC_OUTM			<= PC_OUTX;
 	end
 end
 
