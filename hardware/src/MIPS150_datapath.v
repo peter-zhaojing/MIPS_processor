@@ -36,7 +36,9 @@ module MIPS150_datapath(
 	 input				VarOrShamt,
 	 input	[2:0]		BranchCtrl,
 	 input				Jump,
-	 input				JAL
+	 input				JAL,
+	 input				JLink,
+	 input				JumpReg
     );
 
 /**********************************************************/
@@ -88,6 +90,9 @@ wire				JumpX;
 wire	[31:0]	JumpAddrX;
 wire				JALX;
 wire	[4:0]		WriteRegRorIX;
+wire				JLinkX;
+wire				JumpRegX;
+wire	[31:0]	JumpAddrPCX;
 
 //M stage
 reg				RegWriteM;
@@ -106,7 +111,7 @@ wire	[31:0]	ResultDMEMorIOM;
 wire	[31:0]	DataFromIOM;				//dummy data from IO
 reg				MemtoRegM;
 reg				PCSrcX;
-reg				JALM;
+reg				JLinkM;
 reg	[31:0]	PC_OUTM;
 wire	[31:0]	ResultDMEMorIOorALUOutM;
 
@@ -127,6 +132,8 @@ assign VarOrShamtX	= VarOrShamt;
 assign BranchCtrlX	= BranchCtrl;
 assign JumpX			= Jump;
 assign JALX				= JAL;
+assign JLinkX			= JLink;
+assign JumpRegX		= JumpReg;
 
 //assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
 assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
@@ -250,8 +257,10 @@ end
 assign PCBranchX = PC_OUTX + 32'd4 + (SignOutImmX << 2'd2);
 
 //model Jump Address
-assign JumpAddrX = {PC_OUTX[31:28],InstrX[25:0], 2'b0};
+assign JumpAddrPCX = {PC_OUTX[31:28],InstrX[25:0], 2'b0};
 
+//model a MUX for Jump address to choose from PC+? or Register
+assign JumpAddrX = JumpRegX ? SrcAX : JumpAddrPCX;
 
 
 //Register write address
@@ -375,7 +384,7 @@ assign ResultDMEMorIOM = LoadDMEMorIOM? DataFromIOM : MaskOutM;
 assign ResultDMEMorIOorALUOutM = MemtoRegM ? ResultDMEMorIOM : ALUOutM;
 
 //Another MUX used to select signal from DMEM/IO/ALUOutM or PC+8 (for JAL instr)
-assign ResultM = JALM ? (PC_OUTM + 32'd8) : ResultDMEMorIOorALUOutM;
+assign ResultM = JLinkM ? (PC_OUTM + 32'd8) : ResultDMEMorIOorALUOutM;
 
 /***********************************************************/
 //Hazard Unit
@@ -412,7 +421,7 @@ always@(posedge clk) begin
 		LoadDMEMorIOM 	<= LoadDMEMorIOX;
 		MemtoRegM		<= MemtoRegX;
 		ALUOutM			<= ALUOutX;
-		JALM				<= JALX;
+		JLinkM			<= JLinkX;
 		PC_OUTM			<= PC_OUTX;
 	end
 end

@@ -35,7 +35,9 @@ module MIPS150_control(
 	 output	reg			VarOrShamt,
 	 output	reg [2:0]	BranchCtrl,
 	 output	reg			Jump,
-	 output	reg			JAL
+	 output	reg			JAL,
+	 output	reg			JumpReg,
+	 output	reg			JLink
     );
 
 wire [5:0]	opcode, funct;
@@ -72,9 +74,11 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'bxxx;		//in datapath, this signal generates PCSrc
 					Jump = 1'b0;
 					JAL = 1'b0;
+					JLink = 1'b0;								
+					JumpReg = 1'bx;
 				end
 		`LH:	begin
 					RegWrite = 1'b1;
@@ -88,6 +92,8 @@ always@(*) begin
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
 					JAL = 1'b0;
+					JLink = 1'b0;								
+					JumpReg = 1'bx;
 				end
 		`LW:	begin
 					RegWrite = 1'b1;
@@ -101,6 +107,8 @@ always@(*) begin
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
 					JAL = 1'b0;
+					JLink = 1'b0;								
+					JumpReg = 1'bx;
 				end
 		`LBU:	begin
 					RegWrite = 1'b1;
@@ -114,6 +122,8 @@ always@(*) begin
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
 					JAL = 1'b0;
+					JLink = 1'b0;					
+					JumpReg = 1'bx;
 				end
 		`LHU:	begin
 					RegWrite = 1'b1;
@@ -127,6 +137,8 @@ always@(*) begin
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
 					JAL = 1'b0;
+					JLink = 1'b0;						
+					JumpReg = 1'bx;
 				end
 		`SB:	begin
 					RegWrite = 1'b0;
@@ -139,7 +151,9 @@ always@(*) begin
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
-					JAL = 1'b0;
+					JAL = 1'bx;
+					JLink = 1'bx;
+					JumpReg = 1'bx;
 				end
 		`SH:	begin
 					RegWrite = 1'b0;
@@ -152,7 +166,9 @@ always@(*) begin
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
-					JAL = 1'b0;
+					JAL = 1'bx;
+					JLink = 1'bx;
+					JumpReg = 1'bx;
 				end
 		`SW:	begin
 					RegWrite = 1'b0;
@@ -165,7 +181,9 @@ always@(*) begin
 					VarOrShamt = 1'b1;
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
-					JAL = 1'b0;
+					JAL = 1'bx;
+					JLink = 1'bx;								
+					JumpReg = 1'bx;
 				end
 		 
 		 // I-type Computational Instructions
@@ -181,6 +199,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;
+						JumpReg = 1'bx;
 					end
 		 `LUI:	begin
 						RegWrite = 1'b1;
@@ -194,6 +214,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;								
+						JumpReg = 1'bx;
 					end
 		 `SLTI:	begin
 						RegWrite = 1'b1;
@@ -207,6 +229,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;
+						JumpReg = 1'bx;
 					end
 		 `SLTIU:	begin
 						RegWrite = 1'b1;
@@ -220,6 +244,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;
+						JumpReg = 1'bx;
 					end
 		 `ANDI:	begin
 						RegWrite = 1'b1;
@@ -233,6 +259,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;
+						JumpReg = 1'bx;
 					end
 		 `ORI:	begin
 						RegWrite = 1'b1;
@@ -246,6 +274,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;
+						JumpReg = 1'bx;
 					end
 		 `XORI:	begin
 		 				RegWrite = 1'b1;
@@ -259,6 +289,8 @@ always@(*) begin
 						BranchCtrl = 3'bxxx;
 						Jump = 1'b0;
 						JAL = 1'b0;
+						JLink = 1'b0;
+						JumpReg = 1'bx;
 					end
 					
 		// R-type Computational Instructions
@@ -277,6 +309,8 @@ always@(*) begin
 								BranchCtrl = 3'bxxx;
 								Jump = 1'b0;
 								JAL = 1'b0;
+								JLink = 1'b0;
+								JumpReg = 1'bx;
 							end
 							
 							`SLL, `SRL, `SRA:	begin
@@ -292,7 +326,42 @@ always@(*) begin
 								BranchCtrl = 3'bxxx;
 								Jump = 1'b0;
 								JAL = 1'b0;
+								JLink = 1'b0;
+								JumpReg = 1'bx;
 							end
+							
+							`JR:	begin
+								RegWrite = 1'b0;
+								Mask = 3'bxxx;
+								MemWrite = 2'b00;
+								MemtoReg = 1'bx;
+								SignOrZero = 1'bx;
+								ALUSrc = 1'bx;
+								RegDst = 1'bx;
+								VarOrShamt = 1'b1;
+								BranchCtrl = 3'bxxx;
+								Jump = 1'b1;
+								JAL = 1'bx;
+								JLink = 1'bx;
+								JumpReg = 1'b1;
+							end
+							
+							`JALR:	begin
+								RegWrite = 1'b1;
+								Mask = 3'bxxx;
+								MemWrite = 2'b00;
+								MemtoReg = 1'bx;
+								SignOrZero = 1'bx;
+								ALUSrc = 1'bx;
+								RegDst = 1'b1;
+								VarOrShamt = 1'b1;
+								BranchCtrl = 3'bxxx;
+								Jump = 1'b1;
+								JAL = 1'b0;
+								JLink = 1'b1;
+								JumpReg = 1'b1;
+							end
+							
 							
 							default:	begin
 								RegWrite = 1'b0;
@@ -305,7 +374,9 @@ always@(*) begin
 								VarOrShamt = 1'bx;
 								BranchCtrl = 3'bxxx;
 								Jump = 1'b0;
-								JAL = 1'b0;
+								JAL = 1'bx;
+								JLink = 1'bx;
+								JumpReg = 1'bx;
 							end
 						endcase
 					end
@@ -322,7 +393,9 @@ always@(*) begin
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b000;
 						Jump = 1'b0;
-						JAL = 1'b0;
+						JAL = 1'bx;
+						JLink = 1'bx;
+						JumpReg = 1'bx;						
 					end
 		 `BNE:	begin
 						RegWrite = 1'b0;
@@ -335,7 +408,9 @@ always@(*) begin
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b001;
 						Jump = 1'b0;
-						JAL = 1'b0;
+						JAL = 1'bx;
+						JLink = 1'bx;
+						JumpReg = 1'bx;
 					end
 		 `BLEZ:	begin
 						RegWrite = 1'b0;
@@ -348,7 +423,9 @@ always@(*) begin
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b010;
 						Jump = 1'b0;
-						JAL = 1'b0;
+						JAL = 1'bx;
+						JLink = 1'bx;
+						JumpReg = 1'bx;
 					end		 
 		 `BGTZ:	begin
 						RegWrite = 1'b0;
@@ -361,7 +438,9 @@ always@(*) begin
 						VarOrShamt = 1'b1;
 						BranchCtrl = 3'b011;
 						Jump = 1'b0;
-						JAL = 1'b0;
+						JAL = 1'bx;
+						JLink = 1'bx;
+						JumpReg = 1'bx;
 					end
 		 `REGIMM: begin	//BLTZ abd BGEZ
 						case (Instr[20:16])
@@ -376,7 +455,9 @@ always@(*) begin
 											VarOrShamt = 1'b1;
 											BranchCtrl = 3'b100;
 											Jump = 1'b0;
-											JAL = 1'b0;
+											JAL = 1'bx;
+											JLink = 1'bx;
+											JumpReg = 1'bx;
 										end
 							 `BGEZ:	begin
 							 				RegWrite = 1'b0;
@@ -389,7 +470,9 @@ always@(*) begin
 											VarOrShamt = 1'b1;
 											BranchCtrl = 3'b101;
 											Jump = 1'b0;
-											JAL = 1'b0;
+											JAL = 1'bx;
+											JLink = 1'bx;
+											JumpReg = 1'bx;
 										end
 							default:	begin
 											RegWrite = 1'b0;
@@ -402,7 +485,9 @@ always@(*) begin
 											VarOrShamt = 1'bx;
 											BranchCtrl = 3'bxxx;
 											Jump = 1'b0;
-											JAL = 1'b0;
+											JAL = 1'bx;
+											JLink = 1'bx;								
+											JumpReg = 1'bx;
 										end
 						endcase
 					 end
@@ -418,7 +503,9 @@ always@(*) begin
 					VarOrShamt = 1'bx;
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b1;
-					JAL = 1'b0;
+					JAL = 1'bx;
+					JLink = 1'bx;
+					JumpReg = 1'b0;
 				end
 				
 		 `JAL: begin
@@ -433,6 +520,8 @@ always@(*) begin
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b1;
 					JAL = 1'b1;
+					JLink = 1'b1;
+					JumpReg = 1'b0;
 				 end
 		 
 		 default:	begin
@@ -447,7 +536,9 @@ always@(*) begin
 					VarOrShamt = 1'bx;
 					BranchCtrl = 3'bxxx;
 					Jump = 1'b0;
-					JAL = 1'b0;
+					JAL = 1'bx;
+					JLink = 1'bx;
+					JumpReg = 1'bx;
 		 end
 		 
 		 
