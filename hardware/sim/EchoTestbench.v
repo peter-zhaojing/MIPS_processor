@@ -14,8 +14,9 @@ module EchoTestbench();
 
     parameter HalfCycle = 5;
     parameter Cycle = 2*HalfCycle;
-    parameter ClockFreq = 25_000_000;
-
+    //parameter ClockFreq = 25_000_000;
+    parameter ClockFreq = 50_000_000;
+    
     initial Clock = 0;
     always #(HalfCycle) Clock <= ~Clock;
 
