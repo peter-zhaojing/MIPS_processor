@@ -183,7 +183,7 @@ IMEM_blk_ram	MIPS150_imem(
 	.ena		(~rst),						//Port Clock Enable (ena)
 	.wea		(StoreMaskIMEMX),					//Port A Write Enable. Used to change contents that stored in IMEM?
 	.addra	(ALUOutX[13:2]),					//Write Address, 12 bits wide
-	.dina		(RFout2),			//The contents to be written, 32 bits wide
+	.dina		(ForwardBOutX),			//The contents to be written, 32 bits wide
 	.clkb		(clk),
 	.enb		(~rst),
 	.addrb	(PC_OUT_Jump[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
@@ -336,9 +336,9 @@ MemoryMap MIPS150_memmap(
 DMEM_blk_ram MIPS150_dmem(
 	.clka		(clk),
 	.ena		(1'b1),						//Port Clock Enable (ena) is kinda global enable. If desserted, no Read, Write, or Reset operation are performed on the port
-	.wea		(StoreMaskDMEMX),				//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
+	.wea		(StoreMaskDMEMX),			//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
 	.addra	(ALUOutX[13:2]),			//The two LSB are 0, don't parse as address. Actually no need padding, just use ALUOutX[13:2]
-	.dina		(RFout2),					//Used for "Store"
+	.dina		(ForwardBOutX),			//Used for "Store"
 	.douta	(ReadDataM)
 );
 
