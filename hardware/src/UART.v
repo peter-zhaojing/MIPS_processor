@@ -14,7 +14,8 @@ module UART(
   output        SOut
 );
 
-  parameter ClockFreq =                   100_000_000;
+  //parameter ClockFreq =                   100_000_000;
+  parameter ClockFreq =                   50_000_000;
   parameter BaudRate  =                   115_200;
 
   wire      SOutInt, SInInt;

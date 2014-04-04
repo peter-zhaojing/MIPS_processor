@@ -11,8 +11,8 @@ default: $(TARGET)
 $(TARGET): $(COBJS) $(SOBJS)
 	mips-sde-elf-gcc -static -nostartfiles -nostdlib -nodefaultlibs -G0 -T $(LDSRC) $^ -o $@.elf
 	mips-sde-elf-objcopy -O binary $(TARGET).elf $(TARGET).bin
-	bin2mif $(TARGET).bin $(TARGET).mif
-	bin2coe $(TARGET).bin $(TARGET).coe 32
+#	bin2mif $(TARGET).bin $(TARGET).mif
+#	bin2coe $(TARGET).bin $(TARGET).coe 32
 #	bin2rom $(TARGET) 0 < $(TARGET).bin > $(TARGET).v
 
 %.c.llvm: %.c
@@ -20,7 +20,9 @@ $(TARGET): $(COBJS) $(SOBJS)
 
 %.c.llvm.s: %.c.llvm
 	llc -relocation-model=static -march=mips -o $<.s $<
-
+	#perl -i.bak -lpe 's/\.set.*no(reorder|macro)//' $<.s
+	perl -i.bak -lpe 's/\.set.*//' $<.s
+	
 %.s.o: %.s
 	mips-sde-elf-as $< -o $<.o
 

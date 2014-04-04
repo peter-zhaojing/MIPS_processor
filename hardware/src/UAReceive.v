@@ -14,7 +14,8 @@ module UAReceive(
 
   //--|Parameters|--------------------------------------------------------------
 
-  parameter   ClockFreq         =   100_000_000;
+  //parameter   ClockFreq         =   100_000_000;
+  parameter   ClockFreq         =   50_000_000;
   parameter   BaudRate          =   115_200;
 
   // See diagram in the lab guide

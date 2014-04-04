@@ -14,20 +14,14 @@ module EchoTestbench();
 
     parameter HalfCycle = 5;
     parameter Cycle = 2*HalfCycle;
-    //parameter ClockFreq = 25_000_000;
     parameter ClockFreq = 50_000_000;
-    
+
     initial Clock = 0;
     always #(HalfCycle) Clock <= ~Clock;
 
     // Instantiate your CPU here and connect the FPGA_SERIAL_TX wires
     // to the UART we use for testing
-    MIPS150 mips150(
-      .clk    (Clock),
-      .rst    (Reset),
-      .FPGA_SERIAL_RX (FPGA_SERIAL_RX),
-      .FPGA_SERIAL_TX (FPGA_SERIAL_TX)
-    );
+
 
 
     UART          #( .ClockFreq(       ClockFreq))

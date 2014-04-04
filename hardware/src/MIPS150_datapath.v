@@ -22,6 +22,13 @@ module MIPS150_datapath(
     input 				clk,
     input 				rst,
 	 output	[31:0]	Instr,
+	 output	reg [3:0]	StoreMaskX,
+	 output	[31:0]	ALUOutX,
+	 output	[31:0]	ForwardBOutX,
+	 input	[3:0]		StoreMaskDMEMX,
+	 input	[3:0]		StoreMaskIMEMX,
+	 input				LoadDMEMorIOX,
+	 input	[31:0]	DataFromIOX,
 	
 	 //Control Signals
 	 input	[3:0]		ALUControl,
@@ -59,17 +66,16 @@ reg	[31:0]	InstrX;
 wire				RegWriteX;
 wire	[4:0]		WriteRegX;
 wire	[31:0]	RFout1, RFout2;
-wire	[31:0]	ALUOutX;
+//wire	[31:0]	ALUOutX;
 wire	[3:0]		ALUControlX;
 wire	[31:0]	SrcAX, SrcBX;
 wire	[1:0]		ByteAddrX;
 wire	[2:0]		MaskX;
 wire	[1:0]		MemWriteX;
-reg	[3:0]		StoreMaskX;
-wire	[3:0]		StoreMaskDMEMX;
-wire	[3:0]		StoreMaskIMEMX;
-wire	[3:0]		StoreMaskIOX;
-wire				LoadDMEMorIOX;
+//reg	[3:0]		StoreMaskX;
+//wire	[3:0]		StoreMaskDMEMX;
+//wire	[3:0]		StoreMaskIMEMX;
+//wire				LoadDMEMorIOX;
 wire				MemtoRegX;
 wire				LUItoRegX;
 wire	[31:0]	SignOutImmX;
@@ -82,7 +88,7 @@ wire				VarOrShamtX;
 wire				ForwardAX;
 wire				ForwardBX;
 wire	[31:0]	ForwardAOutX;
-wire	[31:0]	ForwardBOutX;
+//wire	[31:0]	ForwardBOutX;
 wire	[2:0]		BranchCtrlX;
 reg	[31:0]	PC_OUTX;
 wire	[31:0]	PCBranchX;
@@ -93,6 +99,8 @@ wire	[4:0]		WriteRegRorIX;
 wire				JLinkX;
 wire				JumpRegX;
 wire	[31:0]	JumpAddrPCX;
+reg	[31:0]	StoreDataX;
+wire	[5:0]		OpcodeX;
 
 //M stage
 reg				RegWriteM;
@@ -108,7 +116,7 @@ reg	[31:0]	MaskOutM;
 reg	[1:0]		ByteAddrM;
 reg				LoadDMEMorIOM;
 wire	[31:0]	ResultDMEMorIOM;
-wire	[31:0]	DataFromIOM;				//dummy data from IO
+reg	[31:0]	DataFromIOM;
 reg				MemtoRegM;
 reg				PCSrcX;
 reg				JLinkM;
@@ -136,7 +144,9 @@ assign JLinkX			= JLink;
 assign JumpRegX		= JumpReg;
 
 //assign DataFromIOM	= 32'hf0f0f0f0;				//assign dummy data from IO
-assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
+//assign DataFromIOM	= 32'h00f0f0f0;				//assign dummy data from IO
+
+
 
 /**********************************************************/
 //I stage datapath
@@ -183,7 +193,7 @@ IMEM_blk_ram	MIPS150_imem(
 	.ena		(~rst),						//Port Clock Enable (ena)
 	.wea		(StoreMaskIMEMX),					//Port A Write Enable. Used to change contents that stored in IMEM?
 	.addra	(ALUOutX[13:2]),					//Write Address, 12 bits wide
-	.dina		(ForwardBOutX),			//The contents to be written, 32 bits wide
+	.dina		(StoreDataX),			//The contents to be written, 32 bits wide
 	.clkb		(clk),
 	.enb		(~rst),
 	.addrb	(PC_OUT_Jump[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
@@ -316,16 +326,49 @@ always@(*)	begin
 	endcase
 end
 
-
+/*
 //instantiate Memory Map
 MemoryMap MIPS150_memmap(
 	.StoreMask			(StoreMaskX),
-	.TopAddr				(ALUOutX[31:28]),
+	.MemMapAddress		(ALUOutX[31:0]),
 	.StoreMaskDMEM		(StoreMaskDMEMX),
 	.StoreMaskIMEM		(StoreMaskIMEMX),
 	.StoreMaskIO		(StoreMaskIOX),
 	.LoadDMEMorIO		(LoadDMEMorIOX)
 );
+*/
+
+
+//model StoreData module
+assign OpcodeX = InstrX[31:26];
+
+always@(*)	begin
+	case (OpcodeX)
+		6'b101000:	begin		//SB
+			case(ByteAddrX)
+				2'b00:	StoreDataX = {ForwardBOutX[7:0], 24'h000000};
+				2'b01:	StoreDataX = {8'h00, ForwardBOutX[7:0], 16'h0000};
+				2'b10:	StoreDataX = {16'h0000, ForwardBOutX[7:0], 8'h00};
+				2'b11:	StoreDataX = {24'h000000, ForwardBOutX[7:0]};
+			endcase
+		end
+		
+		6'b101001:	begin		//SH
+			case(ByteAddrX[1])
+				1'b0:		StoreDataX = {ForwardBOutX[15:0], 16'h0000};
+				1'b1:		StoreDataX = {16'h0000, ForwardBOutX[15:0]};
+			endcase
+		end
+
+		6'b101011:	begin		//SW
+			StoreDataX = ForwardBOutX;
+		end
+		default:	StoreDataX = ForwardBOutX;
+		
+	endcase
+end
+
+
 
 
 /***********************************************************/
@@ -338,7 +381,7 @@ DMEM_blk_ram MIPS150_dmem(
 	.ena		(1'b1),						//Port Clock Enable (ena) is kinda global enable. If desserted, no Read, Write, or Reset operation are performed on the port
 	.wea		(StoreMaskDMEMX),			//Port A Write Enable. This is the write_enble. It's a bus, each bit correponds one byte. dina is 4 bytes, wea = 4
 	.addra	(ALUOutX[13:2]),			//The two LSB are 0, don't parse as address. Actually no need padding, just use ALUOutX[13:2]
-	.dina		(ForwardBOutX),			//Used for "Store"
+	.dina		(StoreDataX),			//Used for "Store"
 	.douta	(ReadDataM)
 );
 
@@ -418,11 +461,12 @@ always@(posedge clk) begin
 		WriteRegM		<=	WriteRegX;
 		ByteAddrM		<= ByteAddrX;
 		MaskM				<= MaskX;
-		LoadDMEMorIOM 	<= LoadDMEMorIOX;
 		MemtoRegM		<= MemtoRegX;
 		ALUOutM			<= ALUOutX;
 		JLinkM			<= JLinkX;
 		PC_OUTM			<= PC_OUTX;
+		LoadDMEMorIOM 	<= LoadDMEMorIOX;
+		DataFromIOM		<=	DataFromIOX;
 	end
 end
 

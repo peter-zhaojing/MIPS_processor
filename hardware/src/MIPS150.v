@@ -25,6 +25,18 @@ wire				Jump;
 wire				JAL;
 wire				JLink;
 wire				JumpReg;
+wire				DataInReady;
+wire				DataOutValid;
+wire	[7:0]		DataOut;
+wire	[31:0]	ForwardBOutX;
+wire	[3:0]		StoreMaskX;
+wire	[3:0]		StoreMaskDMEMX;
+wire	[3:0]		StoreMaskIMEMX;
+wire				LoadDMEMorIOX;
+wire	[31:0]	DataFromIOX;
+wire				DataOutReady;
+wire	[7:0]		DataToIO;
+wire	[31:0]	ALUOutX;
 
 //instantiate datapath
 MIPS150_datapath mips_datapath(
@@ -45,7 +57,14 @@ MIPS150_datapath mips_datapath(
 	.Jump			(Jump),
 	.JAL			(JAL),
 	.JLink		(JLink),
-	.JumpReg		(JumpReg)
+	.JumpReg		(JumpReg),
+	.ForwardBOutX		(ForwardBOutX),
+	.StoreMaskX		(StoreMaskX),
+	.StoreMaskDMEMX		(StoreMaskDMEMX),
+	.StoreMaskIMEMX		(StoreMaskIMEMX),
+	.LoadDMEMorIOX		(LoadDMEMorIOX),
+	.DataFromIOX		(DataFromIOX),
+	.ALUOutX				(ALUOutX)
 );
 
 
@@ -68,5 +87,38 @@ MIPS150_control mips_control(
 	 .JLink			(JLink),
 	 .JumpReg		(JumpReg)
 );
+
+//instantiate UART
+UART	mips_uart(
+	 .Clock			(clk),
+	 .Reset			(rst),
+	 .DataIn			(DataToIO),
+	 .DataInValid	(DataInValid),
+	 .DataInReady	(DataInReady),
+	 .DataOut		(DataOut),
+	 .DataOutValid	(DataOutValid),
+	 .DataOutReady	(DataOutReady),
+	 .SIn				(FPGA_SERIAL_RX),
+	 .SOut			(FPGA_SERIAL_TX)
+);
+
+
+//instantiate Memory Map
+MemoryMap mips_memmap(
+	.StoreMask		(StoreMaskX),
+	.MemMapAddress	(ALUOutX),
+	.DataInReady	(DataInReady),
+	.DataOutValid	(DataOutValid),
+	.DataOut			(DataOut),
+	.StoreMaskDMEM	(StoreMaskDMEMX),
+	.StoreMaskIMEM	(StoreMaskIMEMX),
+	.LoadDMEMorIO	(LoadDMEMorIOX),
+	.DataFromIO		(DataFromIOX),
+	.DataInValid	(DataInValid),
+	.DataOutReady	(DataOutReady),
+	.DataToIO		(DataToIO),
+	.IODataFromCPU	(ForwardBOutX[7:0])
+);
+
 
 endmodule
