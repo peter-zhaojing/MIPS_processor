@@ -308,20 +308,24 @@ always@(*)	begin
 		2'b00:	StoreMaskX = 4'b0000;		//Not "Store" Instr
 		
 		2'b01:	begin								//SB
-			if(ByteAddrX[1:0] == 2'b00)			StoreMaskX = 4'b1000;		//byte0
-			else if(ByteAddrX[1:0] == 2'b01)		StoreMaskX = 4'b0100;		//byte1
-			else if(ByteAddrX[1:0] == 2'b10)		StoreMaskX = 4'b0010;		//byte2
-			else if(ByteAddrX[1:0] == 2'b11)		StoreMaskX = 4'b0001;		//byte3
+			case(ByteAddrX[1:0])
+				2'b00:			StoreMaskX = 4'b1000;		//byte0
+				2'b01:			StoreMaskX = 4'b0100;		//byte1
+				2'b10:			StoreMaskX = 4'b0010;		//byte2
+				2'b11:			StoreMaskX = 4'b0001;		//byte3
+			endcase
 		end
 		
 		2'b10:	begin								//SH
-			if(ByteAddrX[1] == 1'b0)				StoreMaskX = 4'b1100;
-			else if(ByteAddrX[1] == 1'b1)			StoreMaskX = 4'b0011;
+			if	(ByteAddrX[1] == 1'b0)			StoreMaskX = 4'b1100;
+			else										StoreMaskX = 4'b0011;
 		end
 		
 		2'b11:	begin								//SW
 			StoreMaskX = 4'b1111;
 		end
+		
+		default:	StoreMaskX = 4'b0000;
 		
 	endcase
 end
