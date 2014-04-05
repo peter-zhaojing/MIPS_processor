@@ -429,6 +429,9 @@ assign ResultDMEMorIOorALUOutM = MemtoRegM ? ResultDMEMorIOM : ALUOutM;
 //Another MUX used to select signal from DMEM/IO/ALUOutM or PC+8 (for JAL instr)
 assign ResultM = JLinkM ? (PC_OUTM + 32'd8) : ResultDMEMorIOorALUOutM;
 
+
+
+
 /***********************************************************/
 //Hazard Unit
 /***********************************************************/

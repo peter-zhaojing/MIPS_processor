@@ -20,8 +20,8 @@ $(TARGET): $(COBJS) $(SOBJS)
 
 %.c.llvm.s: %.c.llvm
 	llc -relocation-model=static -march=mips -o $<.s $<
-	#perl -i.bak -lpe 's/\.set.*no(reorder|macro)//' $<.s
-	perl -i.bak -lpe 's/\.set.*//' $<.s
+	perl -i.bak1 -lpe 's/\.set.*//' $<.s
+	perl -i.bak2 -lpe 's/nop//' $<.s
 	
 %.s.o: %.s
 	mips-sde-elf-as $< -o $<.o

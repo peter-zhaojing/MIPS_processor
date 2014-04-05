@@ -60,4 +60,6 @@ ipcore_dir/DMEM_blk_ram
 *.lso
 *.syr
 *.cmd_log
+*.llvm
+*.bak*
 transcript
