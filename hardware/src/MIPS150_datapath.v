@@ -36,7 +36,6 @@ module MIPS150_datapath(
 	 input	[2:0]		Mask,
 	 input	[1:0]		MemWrite,
 	 input				MemtoReg,
-	 input				LUItoReg,
 	 input				SignOrZero,
 	 input				ALUSrc,
 	 input				RegDst,
@@ -77,7 +76,6 @@ wire	[1:0]		MemWriteX;
 //wire	[3:0]		StoreMaskIMEMX;
 //wire				LoadDMEMorIOX;
 wire				MemtoRegX;
-wire				LUItoRegX;
 wire	[31:0]	SignOutImmX;
 wire	[31:0]	ZeroOutImmX;
 wire				SignOrZeroX;
@@ -107,9 +105,6 @@ reg				RegWriteM;
 reg	[4:0]		WriteRegM;
 wire	[31:0]	ResultM;
 reg	[31:0]	ALUOutM;
-wire   [31:0]	ALUOutPadding;
-reg				tempRegWriteM;
-reg	[3:0]		tempWriteRegM;
 wire	[31:0]	ReadDataM;
 reg	[2:0]		MaskM;
 reg	[31:0]	MaskOutM;
@@ -132,7 +127,6 @@ assign RegWriteX		= RegWrite;
 assign MaskX			= Mask;
 assign MemWriteX		= MemWrite;
 assign MemtoRegX		= MemtoReg;
-assign LUItoRegX		= LUItoReg;
 assign SignOrZeroX	= SignOrZero;
 assign ALUSrcX			= ALUSrc;
 assign RegDstX			= RegDst;

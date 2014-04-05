@@ -28,7 +28,6 @@ module MIPS150_control(
 	 output	reg [2:0]	Mask,
 	 output	reg [1:0]	MemWrite,
 	 output  reg			MemtoReg,
-	 output	reg			LUItoReg,
 	 output	reg			SignOrZero,
 	 output	reg			ALUSrc,
 	 output	reg			RegDst,

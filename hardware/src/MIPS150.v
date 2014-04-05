@@ -15,7 +15,6 @@ wire				RegWrite;
 wire	[2:0]		Mask;
 wire  [1:0]		MemWrite;
 wire				MemtoReg;
-wire				LUItoReg;
 wire				SignOrZero;
 wire				ALUSrc;
 wire				RegDst;
@@ -48,7 +47,6 @@ MIPS150_datapath mips_datapath(
 	.Mask			(Mask),
 	.MemWrite	(MemWrite),
 	.MemtoReg	(MemtoReg),
-	.LUItoReg	(LUItoReg),
 	.SignOrZero	(SignOrZero),
 	.ALUSrc		(ALUSrc),
 	.RegDst		(RegDst),
@@ -76,7 +74,6 @@ MIPS150_control mips_control(
 	 .Mask			(Mask),
 	 .MemWrite		(MemWrite),
 	 .MemtoReg		(MemtoReg),
-	 .LUItoReg		(LUItoReg),
 	 .SignOrZero	(SignOrZero),
 	 .ALUSrc			(ALUSrc),
 	 .RegDst			(RegDst),
