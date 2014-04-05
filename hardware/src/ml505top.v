@@ -107,7 +107,7 @@ module ml505top
 
   // Instantiate your CPU here
   // MIPS 150 CPU
-  MIPS150(
+  MIPS150 mips150(
 		.clk	(cpu_clk_g),
 		.rst	(rst),
 		.FPGA_SERIAL_RX(FPGA_SERIAL_RX),

@@ -18,7 +18,7 @@ module RegFile(input clk,
                input we,
                input  [4:0] ra1, ra2, wa,
                input  [31:0] wd,
-               output reg [31:0] rd1, rd2);
+               output [31:0] rd1, rd2);
 
 // Implement your register file here, then delete this comment.
 reg [31:0]	ram [31:0];			//Peter: reg [31:0] should be width; ram [31:0] stand for how many registers inside the ram. For MIPS, needs 32 registers
@@ -30,19 +30,8 @@ always @(posedge clk)	begin
 end
 
 //for asynchronous read
-always @(*)	begin
-	case(ra1)
-		5'b00000:	rd1 <= 32'h0000_0000;	//Reg 0 is hardcoded to be 0
-		default:		rd1 <= ram[ra1];
-	endcase
-end
-
-always @(*)	begin
-	case(ra2)
-		5'b00000:	rd2 <= 32'h0000_0000;	//Reg 0 is hardcoded to be 0
-		default:		rd2 <= ram[ra2];
-	endcase
-end
+assign rd1 = (ra1 == 5'b0000) ? 32'h0000_0000 : ram[ra1];
+assign rd2 = (ra2 == 5'b0000) ? 32'h0000_0000 : ram[ra2];
 
 
 endmodule
