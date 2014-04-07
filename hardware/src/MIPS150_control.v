@@ -73,7 +73,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;		//in datapath, this signal generates PCSrc
+					BranchCtrl = 3'b111;		//in datapath, this signal generates PCSrc
 					Jump = 1'b0;
 					JAL = 1'b0;
 					JLink = 1'b0;								
@@ -88,7 +88,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'b0;
 					JLink = 1'b0;								
@@ -103,7 +103,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'b0;
 					JLink = 1'b0;								
@@ -118,7 +118,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'b0;
 					JLink = 1'b0;					
@@ -133,7 +133,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'b0;
 					JLink = 1'b0;						
@@ -148,7 +148,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'bx;
 					JLink = 1'bx;
@@ -163,7 +163,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'bx;
 					JLink = 1'bx;
@@ -178,7 +178,7 @@ always@(*) begin
 					ALUSrc = 1'b1;
 					RegDst = 1'b0;
 					VarOrShamt = 1'b1;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'bx;
 					JLink = 1'bx;								
@@ -195,7 +195,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;
@@ -210,7 +210,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;								
@@ -225,7 +225,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;
@@ -240,7 +240,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;
@@ -255,7 +255,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;
@@ -270,7 +270,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;
@@ -285,7 +285,7 @@ always@(*) begin
 						ALUSrc = 1'b1;
 						RegDst = 1'b0;
 						VarOrShamt = 1'b1;
-						BranchCtrl = 3'bxxx;
+						BranchCtrl = 3'b111;
 						Jump = 1'b0;
 						JAL = 1'b0;
 						JLink = 1'b0;
@@ -305,7 +305,7 @@ always@(*) begin
 								ALUSrc = 1'b0;
 								RegDst = 1'b1;
 								VarOrShamt = 1'b1;
-								BranchCtrl = 3'bxxx;
+								BranchCtrl = 3'b111;
 								Jump = 1'b0;
 								JAL = 1'b0;
 								JLink = 1'b0;
@@ -322,7 +322,7 @@ always@(*) begin
 								ALUSrc = 1'b0;
 								RegDst = 1'b1;
 								VarOrShamt = 1'b0;
-								BranchCtrl = 3'bxxx;
+								BranchCtrl = 3'b111;
 								Jump = 1'b0;
 								JAL = 1'b0;
 								JLink = 1'b0;
@@ -338,7 +338,7 @@ always@(*) begin
 								ALUSrc = 1'bx;
 								RegDst = 1'bx;
 								VarOrShamt = 1'b1;
-								BranchCtrl = 3'bxxx;
+								BranchCtrl = 3'b111;
 								Jump = 1'b1;
 								JAL = 1'bx;
 								JLink = 1'bx;
@@ -354,7 +354,7 @@ always@(*) begin
 								ALUSrc = 1'bx;
 								RegDst = 1'b1;
 								VarOrShamt = 1'b1;
-								BranchCtrl = 3'bxxx;
+								BranchCtrl = 3'b111;
 								Jump = 1'b1;
 								JAL = 1'b0;
 								JLink = 1'b1;
@@ -371,7 +371,7 @@ always@(*) begin
 								ALUSrc = 1'bx;
 								RegDst = 1'bx;
 								VarOrShamt = 1'bx;
-								BranchCtrl = 3'bxxx;
+								BranchCtrl = 3'b111;
 								Jump = 1'b0;
 								JAL = 1'bx;
 								JLink = 1'bx;
@@ -482,7 +482,7 @@ always@(*) begin
 											ALUSrc = 1'bx;
 											RegDst = 1'bx;
 											VarOrShamt = 1'bx;
-											BranchCtrl = 3'bxxx;
+											BranchCtrl = 3'b111;
 											Jump = 1'b0;
 											JAL = 1'bx;
 											JLink = 1'bx;								
@@ -500,7 +500,7 @@ always@(*) begin
 					ALUSrc = 1'bx;
 					RegDst = 1'bx;
 					VarOrShamt = 1'bx;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b1;
 					JAL = 1'bx;
 					JLink = 1'bx;
@@ -516,7 +516,7 @@ always@(*) begin
 					ALUSrc = 1'bx;
 					RegDst = 1'bx;
 					VarOrShamt = 1'bx;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b1;
 					JAL = 1'b1;
 					JLink = 1'b1;
@@ -533,7 +533,7 @@ always@(*) begin
 					ALUSrc = 1'bx;
 					RegDst = 1'bx;
 					VarOrShamt = 1'bx;
-					BranchCtrl = 3'bxxx;
+					BranchCtrl = 3'b111;
 					Jump = 1'b0;
 					JAL = 1'bx;
 					JLink = 1'bx;

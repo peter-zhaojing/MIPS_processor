@@ -159,20 +159,16 @@ assign PC_IN = PCPlus4I;
 //model MUX for Branch
 //assign PC_OUT_MUX = (PCSrcX) ? PCBranchX : PC_OUT;
 always@(*)	begin
-	case (PCSrcX)
-		1'b1:	PC_OUT_Branch = PCBranchX;
-		1'b0:	PC_OUT_Branch = PC_OUT;
-		default:	PC_OUT_Branch = PC_OUT;
-	endcase
+	if(rst)				PC_OUT_Branch = PC_OUT;
+	else if (PCSrcX)	PC_OUT_Branch = PCBranchX;
+	else					PC_OUT_Branch = PC_OUT;
 end
 
 //model MUX for Jump
 always@(*)	begin
-	case (JumpX)
-		1'b1:	PC_OUT_Jump = JumpAddrX;
-		1'b0: PC_OUT_Jump = PC_OUT_Branch;
-		default:	PC_OUT_Jump = PC_OUT_Branch;
-	endcase
+	if(rst)				PC_OUT_Jump = PC_OUT_Branch;
+	else if (JumpX)	PC_OUT_Jump = JumpAddrX;
+	else					PC_OUT_Jump = PC_OUT_Branch;
 end
 
 //model a register that used to sync up PC_OUT with corresponding instruction. It is necessary because IMEM is synchronous read.
@@ -197,7 +193,23 @@ IMEM_blk_ram	MIPS150_imem(
 /***********************************************************/
 //X stage datapath
 /***********************************************************/
- 
+
+//add Chipscope for debugging
+wire [35:0]	chipscope_control;
+
+Chipscope_icon icon(
+	.CONTROL0	(chipscope_control)
+)	/* synthesis syn_noprune=1 */;
+
+Chipscope_ila ila(
+	.CONTROL		(chipscope_control),
+	.CLK			(clk),
+	.DATA			({rst, PC_OUT_Jump, PC_OUT_Branch, PC_OUT, PC_IN, InstrI, InstrX, ALUOutX, ForwardAX, ForwardBX, JumpX, PCSrcX, JumpRegX, DataFromIOM, LoadDMEMorIOM, ResultM, JLinkM, WriteRegM}),
+	.TRIG0		(rst)
+)	/* synthesis syn_noprune=1 */;
+
+
+
 //instantiate Register File
  (* ram_style = "distributed" *) RegFile MIPS150_regfile(		//Peter: force synthesizer tool to use "distributed" ram
 	.clk		(clk),			
@@ -246,15 +258,19 @@ assign ForwardBOutX = ForwardBX ?	ALUOutM : RFout2;
 
 //model Branch Detection circuit
 always @(*) begin
-	case (BranchCtrlX)
-		3'b000:	PCSrcX = (ALUOutX == 32'h0000_0000);			//BEQ
-		3'b001:	PCSrcX = (ALUOutX != 32'h0000_0000);			//BNE
-		3'b010:	PCSrcX = ($signed(SrcAX) <= $signed(32'h0000_0000));	//BLEZ
-		3'b011:	PCSrcX = ($signed(SrcAX) > $signed(32'h0000_0000));	//BGTZ
-		3'b100:	PCSrcX = ($signed(SrcAX) < $signed(32'h0000_0000));	//BLTZ
-		3'b101:	PCSrcX = ($signed(SrcAX) >= $signed(32'h0000_0000));	//BGEZ
-		default:	PCSrcX = 1'b0;
-	endcase
+	if (rst)	PCSrcX = 1'b0;
+	else	begin
+			case (BranchCtrlX)
+				3'b000:	PCSrcX = (ALUOutX == 32'h0000_0000);			//BEQ
+				3'b001:	PCSrcX = (ALUOutX != 32'h0000_0000);			//BNE
+				3'b010:	PCSrcX = ($signed(SrcAX) <= $signed(32'h0000_0000));	//BLEZ
+				3'b011:	PCSrcX = ($signed(SrcAX) > $signed(32'h0000_0000));	//BGTZ
+				3'b100:	PCSrcX = ($signed(SrcAX) < $signed(32'h0000_0000));	//BLTZ
+				3'b101:	PCSrcX = ($signed(SrcAX) >= $signed(32'h0000_0000));	//BGEZ
+		
+				default:	PCSrcX = 1'b0;
+			endcase
+	end
 end
 
 //model Branch Address
@@ -446,8 +462,10 @@ HazardUnit MIPS150_hazardunit(
 /***********************************************************/
 //I-X Pipeline Register
 /***********************************************************/
+
 always@(posedge clk)	begin
-	if(!rst)	begin
+	if(rst)	InstrX <= 32'h00000000;
+	else begin
 		InstrX	<=	InstrI;
 		PC_OUTX	<= PC_OUT_SyncIMEM;
 	end
