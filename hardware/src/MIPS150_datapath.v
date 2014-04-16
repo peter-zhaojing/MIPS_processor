@@ -29,6 +29,8 @@ module MIPS150_datapath(
 	 input	[3:0]		StoreMaskIMEMX,
 	 input				LoadDMEMorIOX,
 	 input	[31:0]	DataFromIOX,
+	 input				DataOutValid,
+	 input				DataInValid,
 	
 	 //Control Signals
 	 input	[3:0]		ALUControl,
@@ -146,10 +148,17 @@ assign JumpRegX		= JumpReg;
 //I stage datapath
 /**********************************************************/
 
+/*
 //model PC
 always@(posedge clk)	begin
 	if(rst)	PC_OUT	<=	32'h0000_0000;
 	else		PC_OUT	<=	PC_IN;
+end
+*/
+
+always@ (posedge clk) begin
+	if(rst)	PC_OUT	<= 32'h0000_0000;
+	else		PC_OUT	<= PC_IN;
 end
 
 //model PC+4
@@ -173,7 +182,8 @@ end
 
 //model a register that used to sync up PC_OUT with corresponding instruction. It is necessary because IMEM is synchronous read.
 always@(posedge clk)	begin
-	if(!rst)	PC_OUT_SyncIMEM <= PC_OUT;
+	if(rst)	PC_OUT_SyncIMEM <= 32'b0;
+	else	PC_OUT_SyncIMEM <= PC_OUT;
 end
 
 
@@ -185,8 +195,8 @@ IMEM_blk_ram	MIPS150_imem(
 	.addra	(ALUOutX[13:2]),					//Write Address, 12 bits wide
 	.dina		(StoreDataX),			//The contents to be written, 32 bits wide
 	.clkb		(clk),
-	.enb		(~rst),
-	.addrb	(PC_OUT_Jump[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
+	.enb		(1'b1),
+	.addrb	(rst? 12'b0 : PC_OUT_Jump[13:2]),			//addrb is 12 bits. One instruction takes one word (4 bytes), so the address is 0,4,8,12...Therefore, not need the two LSBs
 	.doutb	(InstrI)
 );
 
@@ -195,18 +205,22 @@ IMEM_blk_ram	MIPS150_imem(
 /***********************************************************/
 
 //add Chipscope for debugging
+
 wire [35:0]	chipscope_control;
 
 Chipscope_icon icon(
 	.CONTROL0	(chipscope_control)
 )	/* synthesis syn_noprune=1 */;
 
+
 Chipscope_ila ila(
 	.CONTROL		(chipscope_control),
 	.CLK			(clk),
-	.DATA			({rst, PC_OUT_Jump, PC_OUT_Branch, PC_OUT, PC_IN, InstrI, InstrX, ALUOutX, ForwardAX, ForwardBX, JumpX, PCSrcX, JumpRegX, DataFromIOM, LoadDMEMorIOM, ResultM, JLinkM, WriteRegM}),
-	.TRIG0		(rst)
-)	/* synthesis syn_noprune=1 */;
+	.DATA			({DataInValid,DataOutValid,rst, PC_OUT_SyncIMEM, PC_OUTX, PC_OUTM, StoreDataX,StoreMaskDMEMX,RegWriteM, PC_OUT_Jump, PC_OUT_Branch, PC_OUT, PC_IN, InstrI, InstrX, ALUOutX, ForwardAX, ForwardBX, JumpX, PCSrcX, JumpRegX, DataFromIOM, LoadDMEMorIOM, ResultM, JLinkM, WriteRegM}),
+	.TRIG0		(rst),
+	.TRIG1		(DataOutValid),
+	.TRIG2		(DataInValid)
+)	 /* synthesis syn_noprune=1 */;
 
 
 
@@ -464,7 +478,10 @@ HazardUnit MIPS150_hazardunit(
 /***********************************************************/
 
 always@(posedge clk)	begin
-	if(rst)	InstrX <= 32'h00000000;
+	if(rst)	begin 
+		InstrX <= 32'h00000000;
+		PC_OUTX <= 32'h00000000;
+	end
 	else begin
 		InstrX	<=	InstrI;
 		PC_OUTX	<= PC_OUT_SyncIMEM;
@@ -475,7 +492,19 @@ end
 //X-M Pipeline Register
 /***********************************************************/
 always@(posedge clk) begin
-	if(!rst)	begin
+	if(rst)	begin
+		RegWriteM		<=	1'b0;
+		WriteRegM		<=	5'b0;
+		ByteAddrM		<= 2'b0;
+		MaskM				<= 3'b0;
+		MemtoRegM		<= 1'b0;
+		ALUOutM			<= 32'b0;
+		JLinkM			<= 1'b0;
+		PC_OUTM			<= 32'b0;
+		LoadDMEMorIOM 	<= 1'b0;
+		DataFromIOM		<=	32'b0;		
+	end
+	else	begin
 		RegWriteM		<=	RegWriteX;
 		WriteRegM		<=	WriteRegX;
 		ByteAddrM		<= ByteAddrX;
