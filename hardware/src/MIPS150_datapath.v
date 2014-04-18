@@ -183,7 +183,7 @@ end
 //model a register that used to sync up PC_OUT with corresponding instruction. It is necessary because IMEM is synchronous read.
 always@(posedge clk)	begin
 	if(rst)	PC_OUT_SyncIMEM <= 32'b0;
-	else	PC_OUT_SyncIMEM <= PC_OUT;
+	else	PC_OUT_SyncIMEM <= PC_OUT_Jump;
 end
 
 
@@ -206,21 +206,21 @@ IMEM_blk_ram	MIPS150_imem(
 
 //add Chipscope for debugging
 
-wire [35:0]	chipscope_control;
+//wire [35:0]	chipscope_control;
 
-Chipscope_icon icon(
-	.CONTROL0	(chipscope_control)
-)	/* synthesis syn_noprune=1 */;
+//Chipscope_icon icon(
+//	.CONTROL0	(chipscope_control)
+//)	/* synthesis syn_noprune=1 */;
 
 
-Chipscope_ila ila(
-	.CONTROL		(chipscope_control),
-	.CLK			(clk),
-	.DATA			({DataInValid,DataOutValid,rst, PC_OUT_SyncIMEM, PC_OUTX, PC_OUTM, StoreDataX,StoreMaskDMEMX,RegWriteM, PC_OUT_Jump, PC_OUT_Branch, PC_OUT, PC_IN, InstrI, InstrX, ALUOutX, ForwardAX, ForwardBX, JumpX, PCSrcX, JumpRegX, DataFromIOM, LoadDMEMorIOM, ResultM, JLinkM, WriteRegM}),
-	.TRIG0		(rst),
-	.TRIG1		(DataOutValid),
-	.TRIG2		(DataInValid)
-)	 /* synthesis syn_noprune=1 */;
+//Chipscope_ila ila(
+//	.CONTROL		(chipscope_control),
+//	.CLK			(clk),
+//	.DATA			({DataInValid,DataOutValid,rst, PC_OUT_SyncIMEM, PC_OUTX, PC_OUTM, StoreDataX,StoreMaskDMEMX,RegWriteM, PC_OUT_Jump, PC_OUT_Branch, PC_OUT, PC_IN, InstrI, InstrX, ALUOutX, ForwardAX, ForwardBX, JumpX, PCSrcX, JumpRegX, DataFromIOM, LoadDMEMorIOM, ResultM, JLinkM, WriteRegM}),
+//	.TRIG0		(rst),
+//	.TRIG1		(DataOutValid),
+//	.TRIG2		(DataInValid)
+//)	 /* synthesis syn_noprune=1 */;
 
 
 
