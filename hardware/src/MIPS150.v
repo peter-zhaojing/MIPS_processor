@@ -62,7 +62,9 @@ MIPS150_datapath mips_datapath(
 	.StoreMaskIMEMX		(StoreMaskIMEMX),
 	.LoadDMEMorIOX		(LoadDMEMorIOX),
 	.DataFromIOX		(DataFromIOX),
-	.ALUOutX				(ALUOutX)
+	.ALUOutX				(ALUOutX),
+	.DataOutValid		(DataOutValid),
+	.DataInValid		(DataInValid)
 );
 
 
@@ -114,7 +116,8 @@ MemoryMap mips_memmap(
 	.DataInValid	(DataInValid),
 	.DataOutReady	(DataOutReady),
 	.DataToIO		(DataToIO),
-	.IODataFromCPU	(ForwardBOutX[7:0])
+	.IODataFromCPU	(ForwardBOutX[7:0]),
+	.Instr			(Instr)
 );
 
 
