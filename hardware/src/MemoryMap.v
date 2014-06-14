@@ -46,9 +46,18 @@ module MemoryMap(
 	assign Opcode = Instr[31:26];
 
 always@(*)	begin
-	casez (TopAddr)
+	case (TopAddr)
+		4'b0011, 4'b0111:	begin			//DMEM Read/Write + IMEM Write
+			StoreMaskDMEM	= 	StoreMask;
+			StoreMaskIMEM	= 	StoreMask;
+			LoadDMEMorIO	= 	1'b0;
+			DataFromIO		=	32'hxxxxxxxx;
+			DataToIO			=	8'hxx;
+			DataInValid		=	1'b0;
+			DataOutReady	=	1'b0;
+		end
 	
-		4'b0??1:	begin			//DMEM Read/Write
+		4'b0001, 4'b0101:	begin			//DMEM Read/Write
 			StoreMaskDMEM	= 	StoreMask;
 			StoreMaskIMEM	= 	4'b0000;
 			LoadDMEMorIO	= 	1'b0;
@@ -58,7 +67,7 @@ always@(*)	begin
 			DataOutReady	=	1'b0;
 		end
 		
-		4'b0?1?:	begin			//IMEM Write
+		4'b0010, 4'b0110:	begin			//IMEM Write
 			StoreMaskDMEM	= 	4'b0000;
 			StoreMaskIMEM	= 	StoreMask;
 			LoadDMEMorIO	= 	1'bx;
